@@ -33,6 +33,7 @@ typedef struct s_map
 	char **grid;
 	int width;
 	int height;
+	int error;
 } t_map;
 
 typedef struct s_parse_state
@@ -43,6 +44,7 @@ typedef struct s_parse_state
 	int	ea;
 	int	f;
 	int	c;
+	int player_count;
 } t_parse_state;
 
 typedef struct s_assets
@@ -61,7 +63,6 @@ typedef struct s_game
 {
 	t_map			map;
 	t_assets		assets;
-	// t_player		player;
 
 	void			*mlx;
 	void			*win;
@@ -77,7 +78,7 @@ int		parse_texture(char *line, t_id id, t_game *game);
 int		parse_color(char *line, t_id id, t_game *game);
 
 int		validate_file(int fd, t_game *game);
-int		map_parsing(int fd, char *top_line, t_map *map);
+int		map_parsing(int fd, char *top_line, t_map *map,int * player_count);
 
 int		add_map_line(t_map *map, char *line);
 
@@ -99,8 +100,9 @@ void	trim_right(char *str);
 char	*space_move(char **line, t_id id);
 
 int		ft_isspace(int c);
-int		is_first_wall(char *line);
+int		is_wall(char *line);
 int		is_line_closed(char *line);
+int 	is_left_closed(char *top_line,char *cur_line);
 
 /* MEMORY MANAGEMENT */
 

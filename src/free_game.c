@@ -32,6 +32,16 @@ void	free_assets(t_game *game)
 		free(game->assets.ea);
 }
 
+void	free_grid(t_map *map)
+{
+	if (!map || !map->grid)
+		return;
+	for (int i = 0; map->grid[i]; i++)
+		free(map->grid[i]);
+	free(map->grid);
+	map->grid = NULL;
+}
+
 void	free_game_content(t_game *game)
 {
 	if (!game)
@@ -39,5 +49,5 @@ void	free_game_content(t_game *game)
 
 	free_assets(game);
 	free_map(&game->map);
-
+	free_grid(&game->map);
 }

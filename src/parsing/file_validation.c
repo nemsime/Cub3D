@@ -12,7 +12,7 @@ int	validate_file(int fd, t_game *game)
 	}
 	while (line)
 	{
-		if(is_first_wall(line))
+		if(is_wall(line))
 			break;
 		if (!process_elements(line, game))
 			return (free(line), 0);
@@ -21,7 +21,7 @@ int	validate_file(int fd, t_game *game)
 	}
 	if (check_flag(game, 'Z') || (line[0] == '\0' || line[0] == '\n'))
 		return (free(line),0);
-	if (!map_parsing(fd, line, &game->map))
+	if (!map_parsing(fd, line, &game->map, &game->assets.state.player_count))
     	return (0);
 	return (1);
 }
