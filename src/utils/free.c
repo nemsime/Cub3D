@@ -1,4 +1,4 @@
-#include "../include/cub3d.h"
+#include "../../include/cub3d.h"
 
 void	free_map(t_map *map)
 {

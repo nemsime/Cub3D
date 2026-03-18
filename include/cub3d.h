@@ -18,6 +18,12 @@ typedef enum e_id
     ID_UNKNOWN
 } t_id;
 
+typedef enum e_flag_mode
+{
+    CHECK_DUPLICATE,
+    CHECK_MISSING
+} t_flag_mode;
+
 /* STRUCTS */
 
 typedef struct s_map_node
@@ -69,7 +75,7 @@ typedef struct s_game
 	void			*img;
 } t_game;
 
-/* PARSING */
+/* ==================== PARSING ==================== */
 
 t_id	get_element_id(char *line);
 int		process_elements(char *line, t_game *game);
@@ -78,21 +84,30 @@ int		parse_texture(char *line, t_id id, t_game *game);
 int		parse_color(char *line, t_id id, t_game *game);
 
 int		validate_file(int fd, t_game *game);
-int		map_parsing(int fd, char *top_line, t_map *map,int * player_count);
-
-int		add_map_line(t_map *map, char *line);
-
-/* ASSETS HELPERS */
-
-void    set_flag(t_game *game, t_id id);
-int     check_flag(t_game *game, char flag);
-void    assets_input(t_game **game, t_id id, char *texture, int color);
-
-/* VALIDATION */
-
 void	validation_stage(int argc, char **argv, t_game *game);
 
-/* UTILS */
+int		map_parsing(int fd, char *top_line, t_map *map, int *player_count);
+int		map_validation(t_map *map, int player_count);
+
+/* ==================== MAP ==================== */
+
+int		add_map_line(t_map *map, char *line);
+int		is_player(char *line, int i);
+
+void	flood_fill(t_map *map, int x, int y);
+
+char	*create_map_row(const char *line, int width);
+int		map_copy(t_map *map);
+
+int		is_wall(char *line);
+
+/* ==================== ASSETS ==================== */
+
+void	set_flag(t_game *game, t_id id);
+int		check_flag(t_game *game, t_flag_mode mode);
+void	assets_input(t_game *game, t_id id, char *texture, int color);
+
+/* ==================== UTILS ==================== */
 
 int		is_empty(char *line);
 int		starts_with(char *line, const char *element);
@@ -100,17 +115,17 @@ void	trim_right(char *str);
 char	*space_move(char **line, t_id id);
 
 int		ft_isspace(int c);
-int		is_wall(char *line);
-int		is_line_closed(char *line);
-int 	is_left_closed(char *top_line,char *cur_line);
+int		get_rgb_value(char *rgb);
 
-/* MEMORY MANAGEMENT */
+/* ==================== MEMORY ==================== */
 
 void	free_split(char ***arr);
 void	free_game_content(t_game *game);
 void	free_map(t_map *map);
+void	free_grid(t_map *map);
+void	free_assets(t_game *game);
 
-/* ERROR HANDLING */
+/* ==================== ERROR ==================== */
 
 void	end_error(int fd, char *str);
 

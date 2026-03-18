@@ -19,10 +19,12 @@ int	validate_file(int fd, t_game *game)
 		free(line);
 		line = get_next_line(fd);
 	}
-	if (check_flag(game, 'Z') || (line[0] == '\0' || line[0] == '\n'))
+	if (check_flag(game, CHECK_MISSING) || (line[0] == '\0' || line[0] == '\n'))
 		return (free(line),0);
 	if (!map_parsing(fd, line, &game->map, &game->assets.state.player_count))
     	return (0);
+	if (!map_validation(&game->map, game->assets.state.player_count))
+		return (0);
 	return (1);
 }
 

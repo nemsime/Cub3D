@@ -1,17 +1,18 @@
 CC = cc
 SRCS = \
-src/game.c \
-src/error_handling.c \
-src/parsing/element_id.c \
-src/parsing/utils_lines.c \
-src/parsing/assets_state.c \
-src/parsing/parse_texture.c \
-src/parsing/parse_color.c \
-src/parsing/process_elements.c \
-src/parsing/map_list.c \
-src/parsing/map_validation.c \
-src/parsing/file_validation.c \
-src/free_game.c
+src/main.c \
+src/parsing/parse_elements.c \
+src/parsing/parse_elements_utils.c \
+src/parsing/parse_assets.c \
+src/parsing/parse_file.c \
+src/map/map_parsing.c \
+src/map/map_validation.c \
+src/map/map_copy.c \
+src/map/flood_fill.c \
+src/utils/utils.c \
+src/utils/free.c \
+src/utils/error.c \
+
 CFLGS = -Wall -Wextra -Werror
 #MLXFLAGS = -lmlx -Lmlx -Imlx -lXext -lX11 -lm -lz
 LIBFT = libft/libft.a

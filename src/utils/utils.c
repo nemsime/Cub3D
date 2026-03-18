@@ -1,13 +1,10 @@
-#include "../include/cub3d.h"
+#include "../../include/cub3d.h"
 
-void	end_error(int fd, char *str)
+int ft_isspace(int c)
 {
-	write(2, str, ft_strlen(str));
-	if (fd)
-		close(fd);
-	exit(EXIT_FAILURE);
+    return (c == ' ' || c == '\t' || c == '\n' ||
+            c == '\v' || c == '\f' || c == '\r');
 }
-
 void	free_split(char ***arr)
 {
 	int i;
