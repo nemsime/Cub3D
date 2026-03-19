@@ -72,7 +72,8 @@ typedef struct s_game
 
 	void			*mlx;
 	void			*win;
-	void			*img;
+	void		*img;
+	char		*error_msg;
 } t_game;
 
 /* ==================== PARSING ==================== */
@@ -86,8 +87,8 @@ int		parse_color(char *line, t_id id, t_game *game);
 int		validate_file(int fd, t_game *game);
 void	validation_stage(int argc, char **argv, t_game *game);
 
-int		map_parsing(int fd, char *top_line, t_map *map, int *player_count);
-int		map_validation(t_map *map, int player_count);
+int	map_parsing(int fd, char *top_line, t_game *game);
+int	map_validation(t_game *game);
 
 /* ==================== MAP ==================== */
 
@@ -127,6 +128,7 @@ void	free_assets(t_game *game);
 
 /* ==================== ERROR ==================== */
 
-void	end_error(int fd, char *str);
+void	end_error(int fd, char *str, t_game *game);
+void	set_error(t_game *game, const char *str);
 
 #endif

@@ -50,4 +50,9 @@ void	free_game_content(t_game *game)
 	free_assets(game);
 	free_map(&game->map);
 	free_grid(&game->map);
+	if (game->error_msg)
+	{
+		free(game->error_msg);
+		game->error_msg = NULL;
+	}
 }

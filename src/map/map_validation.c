@@ -1,14 +1,14 @@
 #include "../../include/cub3d.h"
 
-int map_validation(t_map *map, int p_count)
+int map_validation(t_game *game)
 {
-	if (p_count != 1)
-		return (0);
-	if (!map_copy(map))
-		return (0);
-	flood_fill(map, 0, 0);
-	if (map->error)
-		return (0);
+	if (game->assets.state.player_count != 1)
+		return (set_error(game, "ERR: map must contain exactly one player\n"), 0);
+	if (!map_copy(&game->map))
+		return (set_error(game, "ERR: memory allocation failed while copying map\n"),0);
+	flood_fill(&game->map, 0, 0);
+	if (game->map.error)
+		return (set_error(game, "ERR: map is not enclosed by walls\n"), 0);
 	return (1);
 }
 

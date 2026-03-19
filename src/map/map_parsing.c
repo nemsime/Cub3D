@@ -1,6 +1,6 @@
 #include "../../include/cub3d.h"
 
-int map_parsing(int fd,char *top_line,t_map *map,int *player_count)
+int map_parsing(int fd, char *top_line, t_game *game)
 {
     char *cur_line;
 	int i;
@@ -8,23 +8,23 @@ int map_parsing(int fd,char *top_line,t_map *map,int *player_count)
     {
         cur_line = get_next_line(fd);
         trim_right(top_line);
-        if (is_empty(top_line) && cur_line) 
-            return (free(cur_line),free(top_line),0);
+        if (is_empty(top_line) && cur_line)
+            return (set_error(game, "ERR: empty line in map\n"),free(cur_line), free(top_line), 0);
         i = 0;
         while (top_line[i])
         {
-            if (!ft_strchr(" 01NSEW", top_line[i])) 
-                return (free(cur_line),free(top_line),0);
-            if (is_player(top_line,i)) // player count and position in future(?)
-                   (*player_count)++;
+            if (!ft_strchr(" 01NSEW", top_line[i]))
+                return (set_error(game, "ERR: invalid character in map\n"), free(cur_line), free(top_line), 0);
+            if (is_player(top_line, i))
+                game->assets.state.player_count++;
             i++;
         }
-        if (!add_map_line(map, top_line))
-            return (free(cur_line),free(top_line),0);
+        if (!add_map_line(&game->map, top_line))
+            return (set_error(game, "ERR: memory allocation failed while parsing map\n"),free(cur_line), free(top_line), 0);
         free(top_line);
         top_line = cur_line;
     }
-    return (1); 
+    return (1);
 }
 
 int add_map_line(t_map *map, char *line)
