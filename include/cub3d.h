@@ -4,6 +4,10 @@
 # include "../libft/libft.h"
 # include <fcntl.h>
 # include <stdlib.h>
+#include "../mlx_linux/mlx.h"
+
+# define WIN_W 1000
+# define WIN_H 1000
 
 /* ENUMS */
 
@@ -65,6 +69,24 @@ typedef struct s_assets
 	t_parse_state	state;
 } t_assets;
 
+
+typedef struct s_point
+{
+	int				x;
+	int				y;
+}					t_point;
+
+
+typedef struct t_img
+{
+	void			*img;
+	char			*addr;
+	int				bits_per_pixel;
+	int				bytes_per_pixel;
+	int				line_length;
+	int				endian;
+}					t_img;
+
 typedef struct s_game
 {
 	t_map			map;
@@ -72,9 +94,15 @@ typedef struct s_game
 
 	void			*mlx;
 	void			*win;
-	void		*img;
+	t_img			img;
+	t_img			img1;
+	char 			img_n;
 	char		*error_msg;
 } t_game;
+
+/* ==================== GUI ==================== */
+void	start_gui(t_game *game);
+// void	init_game(t_game *game);
 
 /* ==================== PARSING ==================== */
 

@@ -1,6 +1,7 @@
 CC = cc
 SRCS = \
 src/main.c \
+src/gui/win.c \
 src/parsing/parse_elements.c \
 src/parsing/parse_elements_utils.c \
 src/parsing/parse_assets.c \
@@ -11,34 +12,40 @@ src/map/map_copy.c \
 src/map/flood_fill.c \
 src/utils/utils.c \
 src/utils/free.c \
-src/utils/error.c \
+src/utils/error.c
 
 CFLGS = -Wall -Wextra -Werror
 #MLXFLAGS = -lmlx -Lmlx -Imlx -lXext -lX11 -lm -lz
 LIBFT = libft/libft.a
 NAME = cub3D
-RM = rm -rf
 HEADER = include/cub3d.h
 
-OBJ = $(SRCS:%.c=%.o)
+OBJ = $(SRCS:%.c=$(OBJDIR)/%.o)
+OBJDIR = obj
+
+MLX_C =  -I/usr/include -Imlx_linux -O3 
+MLX_F = -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(MAKE) -C libft
-	$(CC) -o $(NAME) $(OBJ) $(LIBFT) 
-#$(MLXFLAGS)
+	$(CC) -o $(NAME) $(OBJ) $(LIBFT) $(MLX_F)
 
-%.o: %.c Makefile 
-	$(CC) $(CFLGS) -c $< -o $@
+# %.o: %.c Makefile 
+# 	$(CC) $(CFLGS) -c $< -o $@
+$(OBJDIR)/%.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLGS) $(MLX_C) -c $< -o $@
+
 
 clean:
 	$(MAKE) clean -C libft
-	$(RM) $(OBJ)
+	rm -rf $(OBJDIR)
 
 fclean: clean
 	$(MAKE) fclean -C libft
-	$(RM) $(NAME)
+	rm -rf $(NAME)
 
 re: fclean all
 
