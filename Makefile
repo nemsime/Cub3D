@@ -15,7 +15,6 @@ src/utils/free.c \
 src/utils/error.c
 
 CFLGS = -Wall -Wextra -Werror
-#MLXFLAGS = -lmlx -Lmlx -Imlx -lXext -lX11 -lm -lz
 LIBFT = libft/libft.a
 NAME = cub3D
 HEADER = include/cub3d.h
@@ -32,12 +31,9 @@ $(NAME): $(OBJ)
 	$(MAKE) -C libft
 	$(CC) -o $(NAME) $(OBJ) $(LIBFT) $(MLX_F)
 
-# %.o: %.c Makefile 
-# 	$(CC) $(CFLGS) -c $< -o $@
 $(OBJDIR)/%.o: %.c
 	mkdir -p $(dir $@)
 	$(CC) $(CFLGS) $(MLX_C) -c $< -o $@
-
 
 clean:
 	$(MAKE) clean -C libft
