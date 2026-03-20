@@ -14,13 +14,13 @@ int map_parsing(int fd, char *top_line, t_game *game)
         while (top_line[i])
         {
             if (!ft_strchr(" 01NSEW", top_line[i]))
-                return (set_error(game, "ERR: invalid character in map\n"), free(cur_line), free(top_line), 0);
+                return (set_error(game, "ERROR: invalid character in map\n"), free(cur_line), free(top_line), 0);
             if (is_player(top_line, i))
                 game->assets.state.player_count++;
             i++;
         }
         if (!add_map_line(&game->map, top_line))
-            return (set_error(game, "ERR: memory allocation failed while parsing map\n"),free(cur_line), free(top_line), 0);
+            return (set_error(game, "ERR: malloc failed while parsing map\n"),free(cur_line), free(top_line), 0);
         free(top_line);
         top_line = cur_line;
     }

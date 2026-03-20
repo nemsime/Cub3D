@@ -15,11 +15,11 @@ int validate_file(int fd, t_game *game)
 		if (is_wall(line))
 			break;
 		if (!process_elements(line, game))
-			return (set_error(game, "ERR: invalid asset element\n"),free(line), 0);
+			return (free(line), 0);
 		free(line);
 		line = get_next_line(fd);
 	}
-	if (check_flag(game, CHECK_MISSING) && (!line || line[0] == '\0' || line[0] == '\n'))
+	if (check_flag(game, CHECK_MISSING) || (!line || line[0] == '\0' || line[0] == '\n'))
 		return (set_error(game, "ERR: missing assets or no map\n"),free(line), 0);
 	if (!map_parsing(fd, line, game))
 		return (0);
