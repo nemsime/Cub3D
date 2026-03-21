@@ -42,15 +42,13 @@ void	free_grid(t_map *map)
 	map->grid = NULL;
 }
 
-int	free_win(t_game *g)
+void	free_win(t_game *g)
 {
 	mlx_destroy_image(g->mlx, g->img.img);
 	mlx_destroy_image(g->mlx, g->img1.img);
 	mlx_destroy_window(g->mlx, g->win);
 	mlx_destroy_display(g->mlx);
 	free(g->mlx);
-	exit(0);
-	return (0);
 }
 
 
