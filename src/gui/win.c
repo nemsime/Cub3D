@@ -1,104 +1,77 @@
 #include "../../include/cub3d.h"
-#include <math.h>
 
 
-static char	*MAP = "111111\
-100101\
-101001\
-1100N1\
-111111";
+static char	*MAP = "\
+1111111\
+1001001\
+1010001\
+1100N01\
+1111111";
 
-#define MAP_STR_COLS	6
+#define MAP_STR_COLS	7
 #define MAP_STR_ROWS	5
 #define COLOR_F 		0x00606060
 #define COLOR_C			0x00404040
 #define COLOR_N			0x00804040
-#define COLOR_S			0x00802040
+#define COLOR_E			0x00802040
 
-#define MINVAL(x, min)	if(x < min) x = min
-#define MAXVAL(x, max)	if(x > max) x = max
+#define MINVAL(x, min)			if(x < min) x = min
+#define MAXVAL(x, max)			if(x > max) x = max
+#define INRANGE(x, mid, eps)	(x >= mid - eps && x <= mid + eps)
 
-static double	g_pos_x;
-static double	g_pos_y;
-static double	g_dir_x;
-static double	g_dir_y;
-static double	g_plane_x;
-static double	g_plane_y;
 
-static int		close_window(t_game *f);
-static int		key_hook(int key, t_game *f);
-
-// static void	put_pixel(char *data, int x, int y, int color, int size_line, int bpp)
-// {
-// 	int	pixel;
-
-// 	pixel = y * size_line + x * (bpp / 8);
-// 	data[pixel] = color & 0xFF;
-// 	data[pixel + 1] = (color >> 8) & 0xFF;
-// 	data[pixel + 2] = (color >> 16) & 0xFF;
-// }
-
-static void put_color(t_img *img, int x, int y, int color)
-{
-	int pixel;
-	
-	pixel = y * img->line_length + x * img->bytes_per_pixel;
-	img->addr[pixel] = color & 0xFF;
-	img->addr[pixel + 1] = (color >> 8) & 0xFF;
-	img->addr[pixel + 2] = (color >> 16) & 0xFF; 
-}
-
+//helper - to be rewritten - gets val in map at (col, row) posiiton
 static int	map_cell(int col, int row)
 {
 	return (MAP[row * MAP_STR_COLS + col]);
 }
 
-
-static void	init_map_raycast(void)
+//helper - to be deleted
+void	init_map_raycast(t_coord* c)
 {
 	int		col;
 	int		row;
-	char	c;
+	char	ch;
 	
-	g_pos_x = MAP_STR_COLS / 2.0;
-	g_pos_y = MAP_STR_ROWS / 2.0;
-	g_dir_x = -1.0;
-	g_dir_y = 0.0;
-	g_plane_x = 0.0;
-	g_plane_y = 0.66;
+	c->pos.x = MAP_STR_COLS / 2.0;
+	c->pos.y = MAP_STR_ROWS / 2.0;
+	c->dir.x = -1.0;
+	c->dir.y = 0.0;
+	c->plane.x = 0.0;
+	c->plane.y = 0.66;
 	row = 0;
 	while (row < MAP_STR_ROWS)
 	{
 		col = 0;
 		while (col < MAP_STR_COLS)
 		{
-			c = map_cell(col, row);
-			if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
+			ch = map_cell(col, row);
+			if (ch == 'N' || ch == 'S' || ch == 'E' || ch == 'W')
 			{
-				g_pos_x = col + 0.5;
-				g_pos_y = row + 0.5;
-				if (c == 'N')
+				c->pos.x = col + 0.5;
+				c->pos.y = row + 0.5;
+				if (ch == 'N')
 				{
-					g_dir_x = 0.0;
-					g_dir_y = -1.0;
+					c->dir.x = 0.0;
+					c->dir.y = -1.0;
 				}
-				else if (c == 'S')
+				else if (ch == 'S')
 				{
-					g_dir_x = 0.0;
-					g_dir_y = 1.0;
+					c->dir.x = 0.0;
+					c->dir.y = 1.0;
 				}
-				else if (c == 'E')
+				else if (ch == 'E')
 				{
-					g_dir_x = 1.0;
-					g_dir_y = 0.0;
+					c->dir.x = 1.0;
+					c->dir.y = 0.0;
 				}
 				else
 				{
-					g_dir_x = -1.0;
-					g_dir_y = 0.0;
+					c->dir.x = -1.0;
+					c->dir.y = 0.0;
 				}
-				g_plane_x = -g_dir_y * 0.66;
-				g_plane_y = g_dir_x * 0.66;
+				c->plane.x = -c->dir.y * 0.66;
+				c->plane.y = c->dir.x * 0.66;
 			}
 			col++;
 		}
@@ -123,20 +96,50 @@ static int	rc_hit_wall(int col, int row)
 }
 
 
-static void	draw_column_3d(t_img *img, int x)
+#define MM_PADING	10
+// #define MMXLEN	100
+// #define MMYLEN	100
+#define MMCOL		0x00303065
+#define MMCOLW		0x008080A5
+#define MMCOLP		0x00A58080
+#define MMSCALE		13
+
+void	add_minimap(t_img* i, t_coord* c)
+{
+	int x, y;
+
+	x = -1;
+	while (++x < MAP_STR_COLS * MMSCALE) 
+	{
+		y = -1;
+
+		while(++y < MAP_STR_ROWS * MMSCALE) {
+			if (rc_hit_wall(x/MMSCALE, y/MMSCALE)) 				//wall
+				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLW);
+			else
+				put_color(i, x + MM_PADING, y + MM_PADING, MMCOL);
+
+			if ( INRANGE(x,  c->pos.x*MMSCALE, 3)  &&  INRANGE(y,  c->pos.y*MMSCALE, 3) )
+				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLP);
+			else if (y % MMSCALE == 0 || x % MMSCALE == 0) 		//grid
+				put_color(i, x + MM_PADING, y + MM_PADING, MMCOL);
+		}
+
+
+	}
+
+}
+
+
+static void	draw_column_3d(t_img *img, t_coord *c, int x)
 {
 	double		camera_x;
-	double		ray_dir_x;
-	double		ray_dir_y;
-	int			map_x;
-	int			map_y;
-	double		side_dist_x;
-	double		side_dist_y;
-	double		delta_dist_x;
-	double		delta_dist_y;
+	t_dpoint	ray;
+	t_dpoint 	delta;
+	t_dpoint 	sideDist;
 	double		perp_wall_dist;
-	int			step_x;
-	int			step_y;
+	t_point 	step;
+	t_point 	map;
 	int			hit;
 	int			side;
 	int			line_height;
@@ -146,59 +149,59 @@ static void	draw_column_3d(t_img *img, int x)
 	int			color;
 
 	camera_x = 2.0 * x / (double)WIN_W - 1.0;
-	ray_dir_x = g_dir_x + g_plane_x * camera_x;
-	ray_dir_y = g_dir_y + g_plane_y * camera_x;
-	map_x = (int)g_pos_x;
-	map_y = (int)g_pos_y;
-	delta_dist_x = (ray_dir_x == 0) ? 1e30 : fabs(1.0 / ray_dir_x);
-	delta_dist_y = (ray_dir_y == 0) ? 1e30 : fabs(1.0 / ray_dir_y);
+	ray.x = c->dir.x + c->plane.x * camera_x;
+	ray.y = c->dir.y + c->plane.y * camera_x;
+	map.x = (int)c->pos.x;
+	map.y = (int)c->pos.y;
+	delta.x = fabs(1.0 / ray.x);
+	delta.y = fabs(1.0 / ray.y);
 	hit = 0;
-	if (ray_dir_x < 0)
+	if (ray.x < 0)
 	{
-		step_x = -1;
-		side_dist_x = (g_pos_x - map_x) * delta_dist_x;
+		step.x = -1;
+		sideDist.x = (c->pos.x - map.x) * delta.x;
 	}
 	else
 	{
-		step_x = 1;
-		side_dist_x = (map_x + 1.0 - g_pos_x) * delta_dist_x;
+		step.x = 1;
+		sideDist.x = (map.x + 1.0 - c->pos.x) * delta.x;
 	}
-	if (ray_dir_y < 0)
+	if (ray.y < 0)
 	{
-		step_y = -1;
-		side_dist_y = (g_pos_y - map_y) * delta_dist_y;
+		step.y = -1;
+		sideDist.y = (c->pos.y - map.y) * delta.y;
 	}
 	else
 	{
-		step_y = 1;
-		side_dist_y = (map_y + 1.0 - g_pos_y) * delta_dist_y;
+		step.y = 1;
+		sideDist.y = (map.y + 1.0 - c->pos.y) * delta.y;
 	}
 	while (hit == 0)
 	{
-		if (side_dist_x < side_dist_y)
+		if (sideDist.x < sideDist.y)
 		{
-			side_dist_x += delta_dist_x;
-			map_x += step_x;
+			sideDist.x += delta.x;
+			map.x += step.x;
 			side = 0;
 		}
 		else
 		{
-			side_dist_y += delta_dist_y;
-			map_y += step_y;
+			sideDist.y += delta.y;
+			map.y += step.y;
 			side = 1;
 		}
-		if (rc_hit_wall(map_x, map_y))
+		if (rc_hit_wall(map.x, map.y))
 			hit = 1;
 	}
-	if (side == 0) perp_wall_dist = (side_dist_x - delta_dist_x);
-	else perp_wall_dist = (side_dist_y - delta_dist_y);
+	if (side == 0) perp_wall_dist = (sideDist.x - delta.x);
+	else perp_wall_dist = (sideDist.y - delta.y);
 	MINVAL(perp_wall_dist, 0.001);
 	line_height = (int)(WIN_H / perp_wall_dist);
 	draw_start = -line_height / 2 + WIN_H / 2;
 	MINVAL(draw_start, 0);
 	draw_end = line_height / 2 + WIN_H / 2;
 	MAXVAL(draw_end, WIN_H - 1);
-	color = side ? COLOR_N : COLOR_S;
+	color = side ? COLOR_N : COLOR_E;
 	y = 0;
 	while (y < draw_start) put_color(img, x, y, COLOR_C), y++;
 	y = draw_start;
@@ -208,91 +211,22 @@ static void	draw_column_3d(t_img *img, int x)
 }
 
 
-static void	draw(t_game *d)
+void	draw(t_game *g)
 {
 	t_img	*img;
 	int x;
 
-	if ((int)d->img_n == 1)
-		img = &d->img1;
+	if ((int)g->img_n == 1)
+		img = &g->img1;
 	else
-		img = &d->img;
-	d->img_n *= -1;
+		img = &g->img;
+	g->img_n *= -1;
 	x = 0;
 	while (x < WIN_W)
 	{
-		draw_column_3d(img, x);
+		draw_column_3d(img, &g->coord, x);
 		x++;
 	}
-	mlx_put_image_to_window(d->mlx, d->win, img->img, 0, 0);
-}
-
-//d 100 s 115 a 97 w 119
-static int	key_hook(int key, t_game *f)
-{
-	if (key == 65307)
-		return (close_window(f), 0);
-	else if (key == 97)
-		g_pos_x -= 0.1;
-	else if (key == 100)
-		g_pos_x += 0.1;
-	else if (key == 119)
-		g_pos_y -= 0.1;
-	else if (key == 115)
-		g_pos_y += 0.1;
-	else if (key == 65361)
-		g_dir_x += 0.1;
-	else if (key == 65363)
-		g_dir_x -= 0.1;
-	
-	// if (key == 65361)
-	// 	g_pos_x -= 0.1;
-	// if (key == 65363)
-	// 	g_pos_x += 0.1;
-	// if (key == 65362)
-	// 	g_pos_y -= 0.1;
-	// if (key == 65364)
-	// 	g_pos_y += 0.1;
-	// check_pos()?
-	printf("g_pos_x: %f, g_pos_y: %f\n%d", g_pos_x, g_pos_y, key);
-	draw(f);
-	return (0);
-}
-
-int	close_window(t_game *f)
-{
-	mlx_destroy_image(f->mlx, f->img1.img);
-	mlx_destroy_image(f->mlx, f->img.img);
-	mlx_destroy_window(f->mlx, f->win);
-	mlx_destroy_display(f->mlx);
-	free(f->mlx);
-	exit(0);
-	return (0);
-}
-
-static void	init_image(t_img *i, void *mlx)
-{
-	i->img = mlx_new_image(mlx, WIN_W, WIN_H);
-	i->addr = mlx_get_data_addr(i->img, &i->bits_per_pixel, &i->line_length,
-			&i->endian);
-	i->bytes_per_pixel = i->bits_per_pixel / 8;
-}
-
-static void	init_game(t_game *g)
-{
-	g->mlx = mlx_init();
-	g->win = mlx_new_window(g->mlx, WIN_W, WIN_H, "cub3D");
-	init_image(&g->img, g->mlx);
-	init_image(&g->img1, g->mlx);
-	g->img_n = 1;
-	init_map_raycast();
-}
-
-void	start_gui(t_game *g)
-{
-	init_game(g);
-	draw(g);
-	mlx_hook(g->win, 17, 0, close_window, g);
-	mlx_hook(g->win, 2, 1L << 0, key_hook, g);
-	mlx_loop(g->mlx);
+	add_minimap(img, &g->coord);
+	mlx_put_image_to_window(g->mlx, g->win, img->img, 0, 0);
 }
