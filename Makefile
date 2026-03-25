@@ -48,6 +48,9 @@ fclean: clean
 test: all
 	./$(NAME) maps/good/wood.cub
 
+val: all
+	valgrind --leak-check=full --show-leak-kinds=all ./$(NAME) maps/good/wood.cub
+
 re: fclean all
 
 .PHONY: all bonus clean fclean re
