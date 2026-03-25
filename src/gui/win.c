@@ -18,7 +18,6 @@ static char	*MAP = "\
 
 #define MINVAL(x, min)			if(x < min) x = min
 #define MAXVAL(x, max)			if(x > max) x = max
-#define INRANGE(x, mid, eps)	(x >= mid - eps && x <= mid + eps)
 
 
 //helper - to be rewritten - gets val in map at (col, row) posiiton
@@ -80,12 +79,12 @@ void	init_map_raycast(t_map* m, t_coord* c)
 	}
 }
 
-static int	rc_hit_wall(t_map* m, int col, int row)
+int	rc_hit_wall(t_map* m, int col, int row)
 {
 	char	ch;
 
 	/* m->grid is indexed as grid[row][col] */
-	if (col < 0 || row < 0 || col >= m->width || row >= m->height)
+	if (col < 0 || row < 0 )
 		return (1);
 	ch = m->grid[row][col];
 	if (ch == '1')
@@ -98,75 +97,6 @@ static int	rc_hit_wall(t_map* m, int col, int row)
 		return (0);
 	return (1);
 }
-
-
-#define MM_PADING	10
-// #define MMXLEN	100
-// #define MMYLEN	100
-#define MMCOL		0x00303065
-#define MMCOLW		0x008080A5
-#define MMCOLP		0x00A58080
-#define MMSCALE		13
-
-// void	add_minimap(t_map *m, t_img* i, t_coord* c)
-// {
-// 	int x, y;
-// 	int px;
-// 	int py;
-
-// 	x = -1;
-// 	/* X on the minimap corresponds to map 'col', Y corresponds to map 'row' */
-// 	while (++x < m->width * MMSCALE)
-// 	{
-// 		y = -1;
-
-// 		while (++y < m->height * MMSCALE) {
-// 			px = x + MM_PADING;
-// 			py = y + MM_PADING;
-// 			/* Safety: avoid writing outside the mlx image buffer */
-// 			if (px < 0 || py < 0 || px >= WIN_W || py >= WIN_H)
-// 			{
-// 				continue ;
-// 			}
-// 			if (rc_hit_wall(m, x / MMSCALE, y / MMSCALE)) // wall
-// 				put_color(i, px, py, MMCOLW);
-// 			else
-// 				put_color(i, px, py, MMCOL);
-
-// 			if (INRANGE(x, c->pos.x * MMSCALE, 3) && INRANGE(y, c->pos.y * MMSCALE, 3))
-// 				put_color(i, px, py, MMCOLP);
-// 			else if (y % MMSCALE == 0 || x % MMSCALE == 0) // grid
-// 				put_color(i, px, py, MMCOL);
-// 		}
-// 	}
-// }
-void	add_minimap(t_map *m, t_img* i, t_coord* c)
-{
-	int x, y;
-
-	x = -1;
-	while (++x < m->width * MMSCALE + 1)
-	{
-		y = -1;
-
-		while(++y <  m->height * MMSCALE + 1) {
-			char res = rc_hit_wall(m, x/MMSCALE, y/MMSCALE);
-			if (res == 1) 				//wall
-				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLW);
-			else if (res == 0)
-				put_color(i, x + MM_PADING, y + MM_PADING, MMCOL);
-
-			if ( INRANGE(x,  c->pos.x*MMSCALE, 3)  &&  INRANGE(y,  c->pos.y*MMSCALE, 3) )
-				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLP);
-			else if (y % MMSCALE == 0 || x % MMSCALE == 0) 		//grid
-				put_color(i, x + MM_PADING, y + MM_PADING, MMCOL);
-		}
-
-
-	}
-
-}
-
 
 static void	draw_column_3d(t_map *m, t_img *img, t_coord *c, int x)
 {

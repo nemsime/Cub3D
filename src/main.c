@@ -3,14 +3,14 @@
 static void print_map(t_game *g)
 {
 	t_map m = g->map;
-	for (int i = 0; i < m.height; i++){
-	for (int j = 0; j < m.width; j++)
+	for (int i = 0; i < m.height + 1; i++){
+	for (int j = 0; j < m.width + 2; j++)
 
 		printf("%c ", m.grid[i][j]);
 	printf("\n");
 	}
 }
-
+ 
 int	main(int argc, char **argv)
 {
 	t_game game;
@@ -20,5 +20,4 @@ int	main(int argc, char **argv)
 
 	print_map(&game);
 	start_gui(&game);
-	free_game_content(&game);
 }

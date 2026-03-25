@@ -122,6 +122,7 @@ void	add_minimap(t_map*, t_img*, t_coord*);
 void 	put_color(t_img *, int, int, int);
 void	init_map_raycast(t_map*, t_coord*); // temp funciton
 void	draw(t_game *);
+int		rc_hit_wall(t_map* m, int col, int row);
 
 // void	init_game(t_game *game);
 

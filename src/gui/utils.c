@@ -11,15 +11,15 @@ void put_color(t_img *img, int x, int y, int color)
 	img->addr[pixel + 2] = (color >> 16) & 0xFF; 
 }
 
-static int	close_window(t_game *f)
+static int	close_window(t_game *g)
 {
-	mlx_destroy_image(f->mlx, f->img1.img);
-	mlx_destroy_image(f->mlx, f->img.img);
-	mlx_destroy_window(f->mlx, f->win);
-	mlx_destroy_display(f->mlx);
-	free(f->mlx);
+	mlx_destroy_image(g->mlx, g->img1.img);
+	mlx_destroy_image(g->mlx, g->img.img);
+	mlx_destroy_window(g->mlx, g->win);
+	mlx_destroy_display(g->mlx);
+	free(g->mlx);
+	free_game_content(g);
 	exit(0);
-	return (0);
 }
 
 static int	key_hook(int key, t_game *g)
@@ -28,21 +28,21 @@ static int	key_hook(int key, t_game *g)
 
 	if (key == 65307)
 		return (close_window(g), 0);
-	else if (key == 97 && c->pos.x < g->map.width - 0.1)
+	else if (key == 97 && c->pos.x <= g->map.width - 0.1)
 		c->pos.x += 0.1;
-	else if (key == 100 && c->pos.x > 0.1)
+	else if (key == 100 && c->pos.x >= 0.1)
 		c->pos.x -= 0.1;
-	else if (key == 119 && c->pos.y < g->map.height - 0.1)
+	else if (key == 119 && c->pos.y <= g->map.height - 0.1)
 		c->pos.y += 0.1;
-	else if (key == 115 && c->pos.y > 0.1)
+	else if (key == 115 && c->pos.y >= 0.1)
 		c->pos.y -= 0.1;
 	else if (key == 65361)
-		c->dir.x += 0.1;
+		c->plane.x += 0.1;
 	else if (key == 65363)
-		c->dir.x -= 0.1;
+		c->plane.x -= 0.1;
 	
 	// check_pos()?
-	printf("c->pos.x: %f, c->pos.y: %f\n%d", c->pos.x, c->pos.y, key);
+	// printf("c->pos.x: %f, c->pos.y: %f\n%d", c->pos.x, c->pos.y, key);
 	draw(g);
 	return (0);
 }
