@@ -117,11 +117,11 @@ typedef struct s_game
 } t_game;
 
 /* ==================== GUI ==================== */
-void	start_gui(t_game *game);
-void	add_minimap(t_img*, t_coord*);
-void 	put_color(t_img *img, int x, int y, int color);
-void	init_map_raycast(t_coord* c); // temp funciton
-void	draw(t_game *g);
+void	start_gui(t_game *);
+void	add_minimap(t_map*, t_img*, t_coord*);
+void 	put_color(t_img *, int, int, int);
+void	init_map_raycast(t_map*, t_coord*); // temp funciton
+void	draw(t_game *);
 
 // void	init_game(t_game *game);
 

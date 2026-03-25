@@ -1,6 +1,6 @@
 #include "../../include/cub3d.h"
 
-
+/*
 static char	*MAP = "\
 1111111\
 1001001\
@@ -10,6 +10,7 @@ static char	*MAP = "\
 
 #define MAP_STR_COLS	7
 #define MAP_STR_ROWS	5
+*/
 #define COLOR_F 		0x00606060
 #define COLOR_C			0x00404040
 #define COLOR_N			0x00804040
@@ -21,31 +22,31 @@ static char	*MAP = "\
 
 
 //helper - to be rewritten - gets val in map at (col, row) posiiton
-static int	map_cell(int col, int row)
-{
-	return (MAP[row * MAP_STR_COLS + col]);
-}
+// static int	map_cell(int col, int row)
+// {
+// 	return (MAP[row * MAP_STR_COLS + col]);
+// }
 
 //helper - to be deleted
-void	init_map_raycast(t_coord* c)
+void	init_map_raycast(t_map* m, t_coord* c)
 {
 	int		col;
 	int		row;
 	char	ch;
 	
-	c->pos.x = MAP_STR_COLS / 2.0;
-	c->pos.y = MAP_STR_ROWS / 2.0;
+	c->pos.x = m->height / 2.0;
+	c->pos.y = m->width / 2.0;
 	c->dir.x = -1.0;
 	c->dir.y = 0.0;
 	c->plane.x = 0.0;
 	c->plane.y = 0.66;
 	row = 0;
-	while (row < MAP_STR_ROWS)
+	while (row < m->height)
 	{
 		col = 0;
-		while (col < MAP_STR_COLS)
+		while (col < m->width)
 		{
-			ch = map_cell(col, row);
+			ch = m->grid[row][col];
 			if (ch == 'N' || ch == 'S' || ch == 'E' || ch == 'W')
 			{
 				c->pos.x = col + 0.5;
@@ -79,13 +80,14 @@ void	init_map_raycast(t_coord* c)
 	}
 }
 
-static int	rc_hit_wall(int col, int row)
+static int	rc_hit_wall(t_map* m, int col, int row)
 {
 	char	ch;
 
-	if (col < 0 || row < 0 || col >= MAP_STR_COLS || row >= MAP_STR_ROWS)
+	/* m->grid is indexed as grid[row][col] */
+	if (col < 0 || row < 0 || col >= m->width || row >= m->height)
 		return (1);
-	ch = map_cell(col, row);
+	ch = m->grid[row][col];
 	if (ch == '1')
 		return (1);
 	if (ch == '0')
@@ -104,25 +106,35 @@ static int	rc_hit_wall(int col, int row)
 #define MMCOLP		0x00A58080
 #define MMSCALE		13
 
-void	add_minimap(t_img* i, t_coord* c)
+void	add_minimap(t_map *m, t_img* i, t_coord* c)
 {
 	int x, y;
+	int px;
+	int py;
 
 	x = -1;
-	while (++x < MAP_STR_COLS * MMSCALE) 
+	/* X on the minimap corresponds to map 'col', Y corresponds to map 'row' */
+	while (++x < m->width * MMSCALE)
 	{
 		y = -1;
 
-		while(++y < MAP_STR_ROWS * MMSCALE) {
-			if (rc_hit_wall(x/MMSCALE, y/MMSCALE)) 				//wall
-				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLW);
+		while (++y < m->height * MMSCALE) {
+			px = x + MM_PADING;
+			py = y + MM_PADING;
+			/* Safety: avoid writing outside the mlx image buffer */
+			if (px < 0 || py < 0 || px >= WIN_W || py >= WIN_H)
+			{
+				continue ;
+			}
+			if (rc_hit_wall(m, x / MMSCALE, y / MMSCALE)) // wall
+				put_color(i, px, py, MMCOLW);
 			else
-				put_color(i, x + MM_PADING, y + MM_PADING, MMCOL);
+				put_color(i, px, py, MMCOL);
 
-			if ( INRANGE(x,  c->pos.x*MMSCALE, 3)  &&  INRANGE(y,  c->pos.y*MMSCALE, 3) )
-				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLP);
-			else if (y % MMSCALE == 0 || x % MMSCALE == 0) 		//grid
-				put_color(i, x + MM_PADING, y + MM_PADING, MMCOL);
+			if (INRANGE(x, c->pos.x * MMSCALE, 3) && INRANGE(y, c->pos.y * MMSCALE, 3))
+				put_color(i, px, py, MMCOLP);
+			else if (y % MMSCALE == 0 || x % MMSCALE == 0) // grid
+				put_color(i, px, py, MMCOL);
 		}
 
 
@@ -131,7 +143,7 @@ void	add_minimap(t_img* i, t_coord* c)
 }
 
 
-static void	draw_column_3d(t_img *img, t_coord *c, int x)
+static void	draw_column_3d(t_map *m, t_img *img, t_coord *c, int x)
 {
 	double		camera_x;
 	t_dpoint	ray;
@@ -190,7 +202,7 @@ static void	draw_column_3d(t_img *img, t_coord *c, int x)
 			map.y += step.y;
 			side = 1;
 		}
-		if (rc_hit_wall(map.x, map.y))
+		if (rc_hit_wall(m, map.x, map.y))
 			hit = 1;
 	}
 	if (side == 0) perp_wall_dist = (sideDist.x - delta.x);
@@ -222,11 +234,14 @@ void	draw(t_game *g)
 		img = &g->img;
 	g->img_n *= -1;
 	x = 0;
+	write(1,  "hui", 4);
+
 	while (x < WIN_W)
 	{
-		draw_column_3d(img, &g->coord, x);
+		draw_column_3d(&g->map, img, &g->coord, x);
 		x++;
 	}
-	add_minimap(img, &g->coord);
+	write(1,  "hui", 4);
+	add_minimap(&g->map, img, &g->coord);
 	mlx_put_image_to_window(g->mlx, g->win, img->img, 0, 0);
 }

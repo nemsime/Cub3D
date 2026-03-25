@@ -45,6 +45,9 @@ fclean: clean
 	$(MAKE) fclean -C libft
 	rm -rf $(NAME)
 
+test: all
+	./$(NAME) maps/good/wood.cub
+
 re: fclean all
 
 .PHONY: all bonus clean fclean re
