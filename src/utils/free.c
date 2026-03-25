@@ -1,13 +1,13 @@
 #include "../../include/cub3d.h"
 
-void	free_map(t_map *map)
+void	free_map(t_map_node *head)
 {
 	t_map_node	*tmp;
 	t_map_node	*next;
 
-	if (!map)
+	if (!head)
 		return;
-	tmp = map->head;
+	tmp = head;
 	while (tmp)
 	{
 		next = tmp->next;
@@ -15,9 +15,6 @@ void	free_map(t_map *map)
 		free(tmp);
 		tmp = next;
 	}
-	map->head = NULL;
-	map->width = 0;
-	map->height = 0;
 }
 
 void	free_assets(t_game *game)
@@ -48,7 +45,6 @@ void	free_game_content(t_game *game)
 		return;
 
 	free_assets(game);
-	free_map(&game->map);
 	free_grid(&game->map);
 	if (game->error_msg)
 	{

@@ -8,8 +8,6 @@ int map_validation(t_game *game)
     }
 	if (game->assets.state.player_count != 1)
         return (set_error(game, "ERR: map must contain exactly one player\n"), 0);
-	if (!map_copy(&game->map))
-		return (set_error(game, "ERR: memory allocation failed while copying map\n"),0);
 	flood_fill(&game->map, 0, 0);
 	if (game->map.error)
 		return (set_error(game, "ERR: map is not enclosed by walls\n"), 0);

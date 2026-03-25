@@ -32,10 +32,16 @@ typedef struct s_map_node
     struct s_map_node   *next;
 }   t_map_node;
 
+typedef struct s_map_list
+{
+    t_map_node   *head;
+    t_map_node   *tail;
+    int          width;
+    int          height;
+} t_map_list;
+
 typedef struct s_map
 {
-	t_map_node  *head;
-	t_map_node *tail;
 	char **grid;
 	int width;
 	int height;
@@ -84,21 +90,24 @@ int		process_elements(char *line, t_game *game);
 int		parse_texture(char *line, t_id id, t_game *game);
 int		parse_color(char *line, t_id id, t_game *game);
 
+char	*process_assets(int fd, t_game *game);
+int		validate_map(int fd, char *first_line, t_game *game);
 int		validate_file(int fd, t_game *game);
 void	validation_stage(int argc, char **argv, t_game *game);
 
-int	map_parsing(int fd, char *top_line, t_game *game);
+t_map_node	*map_parsing(int fd, char *top_line, t_game *game);
 int	map_validation(t_game *game);
 
 /* ==================== MAP ==================== */
 
-int		add_map_line(t_map *map, char *line);
+int		validate_map_line(char *line, t_game *game);
+int		add_map_line(t_map_list *list, char *line);
 int		is_player(char *line, int i);
 
 void	flood_fill(t_map *map, int x, int y);
 
 char	*create_map_row(const char *line, int width);
-int		map_copy(t_map *map);
+int		map_copy(t_map_node *head, t_map *map);
 
 int		is_wall(char *line);
 
@@ -122,7 +131,7 @@ int		get_rgb_value(char *rgb);
 
 void	free_split(char ***arr);
 void	free_game_content(t_game *game);
-void	free_map(t_map *map);
+void	free_map(t_map_node *head);
 void	free_grid(t_map *map);
 void	free_assets(t_game *game);
 
