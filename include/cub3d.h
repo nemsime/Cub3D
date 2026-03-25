@@ -2,9 +2,10 @@
 # define CUB3D_H
 
 # include "../libft/libft.h"
+# include "../mlx_linux/mlx.h"
 # include <fcntl.h>
 # include <stdlib.h>
-#include "../mlx_linux/mlx.h"
+# include <math.h>
 
 # define WIN_W 1000
 # define WIN_H 1000
@@ -76,8 +77,14 @@ typedef struct s_point
 	int				y;
 }					t_point;
 
+typedef struct s_dpoint
+{
+	double			x;
+	double			y;
+}					t_dpoint;
 
-typedef struct t_img
+
+typedef struct s_img
 {
 	void			*img;
 	char			*addr;
@@ -87,21 +94,35 @@ typedef struct t_img
 	int				endian;
 }					t_img;
 
+typedef struct s_coord
+{
+	t_dpoint		pos;
+	t_dpoint		dir;
+	t_dpoint		plane;
+}					t_coord;
+
 typedef struct s_game
 {
 	t_map			map;
 	t_assets		assets;
+	t_coord			coord;
 
-	void			*mlx;
-	void			*win;
 	t_img			img;
 	t_img			img1;
 	char 			img_n;
-	char		*error_msg;
+
+	void			*mlx;
+	void			*win;
+	char			*error_msg;
 } t_game;
 
 /* ==================== GUI ==================== */
 void	start_gui(t_game *game);
+void	add_minimap(t_img*, t_coord*);
+void 	put_color(t_img *img, int x, int y, int color);
+void	init_map_raycast(t_coord* c); // temp funciton
+void	draw(t_game *g);
+
 // void	init_game(t_game *game);
 
 /* ==================== PARSING ==================== */
@@ -159,4 +180,4 @@ void	free_assets(t_game *game);
 void	end_error(int fd, char *str, t_game *game);
 void	set_error(t_game *game, const char *str);
 
-#endif
+# endif
