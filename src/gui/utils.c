@@ -28,14 +28,14 @@ static int	key_hook(int key, t_game *g)
 
 	if (key == 65307)
 		return (close_window(g), 0);
-	else if (key == 97)
-		c->pos.x -= 0.1;
-	else if (key == 100)
+	else if (key == 97 && c->pos.x < g->map.width - 0.1)
 		c->pos.x += 0.1;
-	else if (key == 119)
-		c->pos.y -= 0.1;
-	else if (key == 115)
+	else if (key == 100 && c->pos.x > 0.1)
+		c->pos.x -= 0.1;
+	else if (key == 119 && c->pos.y < g->map.height - 0.1)
 		c->pos.y += 0.1;
+	else if (key == 115 && c->pos.y > 0.1)
+		c->pos.y -= 0.1;
 	else if (key == 65361)
 		c->dir.x += 0.1;
 	else if (key == 65363)
@@ -62,7 +62,7 @@ void	start_gui(t_game *g)
 	init_image(&g->img, g->mlx);
 	init_image(&g->img1, g->mlx);
 	g->img_n = 1;
-	init_map_raycast(&g->coord);
+	init_map_raycast(&g->map, &g->coord);
 	draw(g);
 	mlx_hook(g->win, 17, 0, close_window, g);
 	mlx_hook(g->win, 2, 1L << 0, key_hook, g);

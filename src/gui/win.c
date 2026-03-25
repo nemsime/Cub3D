@@ -92,6 +92,8 @@ static int	rc_hit_wall(t_map* m, int col, int row)
 		return (1);
 	if (ch == '0')
 		return (0);
+	if (ch == '/')
+		return (-1);
 	if (ch == 'N' || ch == 'S' || ch == 'E' || ch == 'W')
 		return (0);
 	return (1);
@@ -106,35 +108,58 @@ static int	rc_hit_wall(t_map* m, int col, int row)
 #define MMCOLP		0x00A58080
 #define MMSCALE		13
 
+// void	add_minimap(t_map *m, t_img* i, t_coord* c)
+// {
+// 	int x, y;
+// 	int px;
+// 	int py;
+
+// 	x = -1;
+// 	/* X on the minimap corresponds to map 'col', Y corresponds to map 'row' */
+// 	while (++x < m->width * MMSCALE)
+// 	{
+// 		y = -1;
+
+// 		while (++y < m->height * MMSCALE) {
+// 			px = x + MM_PADING;
+// 			py = y + MM_PADING;
+// 			/* Safety: avoid writing outside the mlx image buffer */
+// 			if (px < 0 || py < 0 || px >= WIN_W || py >= WIN_H)
+// 			{
+// 				continue ;
+// 			}
+// 			if (rc_hit_wall(m, x / MMSCALE, y / MMSCALE)) // wall
+// 				put_color(i, px, py, MMCOLW);
+// 			else
+// 				put_color(i, px, py, MMCOL);
+
+// 			if (INRANGE(x, c->pos.x * MMSCALE, 3) && INRANGE(y, c->pos.y * MMSCALE, 3))
+// 				put_color(i, px, py, MMCOLP);
+// 			else if (y % MMSCALE == 0 || x % MMSCALE == 0) // grid
+// 				put_color(i, px, py, MMCOL);
+// 		}
+// 	}
+// }
 void	add_minimap(t_map *m, t_img* i, t_coord* c)
 {
 	int x, y;
-	int px;
-	int py;
 
 	x = -1;
-	/* X on the minimap corresponds to map 'col', Y corresponds to map 'row' */
-	while (++x < m->width * MMSCALE)
+	while (++x < m->width * MMSCALE + 1)
 	{
 		y = -1;
 
-		while (++y < m->height * MMSCALE) {
-			px = x + MM_PADING;
-			py = y + MM_PADING;
-			/* Safety: avoid writing outside the mlx image buffer */
-			if (px < 0 || py < 0 || px >= WIN_W || py >= WIN_H)
-			{
-				continue ;
-			}
-			if (rc_hit_wall(m, x / MMSCALE, y / MMSCALE)) // wall
-				put_color(i, px, py, MMCOLW);
-			else
-				put_color(i, px, py, MMCOL);
+		while(++y <  m->height * MMSCALE + 1) {
+			char res = rc_hit_wall(m, x/MMSCALE, y/MMSCALE);
+			if (res == 1) 				//wall
+				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLW);
+			else if (res == 0)
+				put_color(i, x + MM_PADING, y + MM_PADING, MMCOL);
 
-			if (INRANGE(x, c->pos.x * MMSCALE, 3) && INRANGE(y, c->pos.y * MMSCALE, 3))
-				put_color(i, px, py, MMCOLP);
-			else if (y % MMSCALE == 0 || x % MMSCALE == 0) // grid
-				put_color(i, px, py, MMCOL);
+			if ( INRANGE(x,  c->pos.x*MMSCALE, 3)  &&  INRANGE(y,  c->pos.y*MMSCALE, 3) )
+				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLP);
+			else if (y % MMSCALE == 0 || x % MMSCALE == 0) 		//grid
+				put_color(i, x + MM_PADING, y + MM_PADING, MMCOL);
 		}
 
 
@@ -234,14 +259,11 @@ void	draw(t_game *g)
 		img = &g->img;
 	g->img_n *= -1;
 	x = 0;
-	write(1,  "hui", 4);
-
 	while (x < WIN_W)
 	{
 		draw_column_3d(&g->map, img, &g->coord, x);
 		x++;
 	}
-	write(1,  "hui", 4);
 	add_minimap(&g->map, img, &g->coord);
 	mlx_put_image_to_window(g->mlx, g->win, img->img, 0, 0);
 }
