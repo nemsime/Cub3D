@@ -1,4 +1,5 @@
 #include "../../include/cub3d.h"
+
 #define INRANGE(x, mid, eps)	(x >= mid - eps && x <= mid + eps)
 
 #define MM_PADING	10
@@ -15,7 +16,6 @@ void	add_minimap(t_map *m, t_img* i, t_coord* c)
 	while (++x < (m->width + 2) * MMSCALE)
 	{
 		y = -1;
-
 		while(++y < (m->height + 2) * MMSCALE) 
 		{
 			char res = rc_hit_wall(m, x/MMSCALE, y/MMSCALE);
@@ -24,7 +24,6 @@ void	add_minimap(t_map *m, t_img* i, t_coord* c)
 			else if (res == 0)
 				put_color(i, x + MM_PADING, y + MM_PADING, MMCOL);
 			else continue;
-			
 			if ( INRANGE(x,  c->pos.x*MMSCALE, 3)  &&  INRANGE(y,  c->pos.y*MMSCALE, 3) )
 				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLP);
 			else if (y % MMSCALE == 0 || x % MMSCALE == 0) 		//grid

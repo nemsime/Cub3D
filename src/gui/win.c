@@ -20,25 +20,18 @@ static char	*MAP = "\
 #define MAXVAL(x, max)			if(x > max) x = max
 
 
-//helper - to be rewritten - gets val in map at (col, row) posiiton
-// static int	map_cell(int col, int row)
-// {
-// 	return (MAP[row * MAP_STR_COLS + col]);
-// }
-
-//helper - to be deleted
 void	init_map_raycast(t_map* m, t_coord* c)
 {
 	int		col;
 	int		row;
 	char	ch;
 	
-	c->pos.x = m->height / 2.0;
-	c->pos.y = m->width / 2.0;
-	c->dir.x = -1.0;
-	c->dir.y = 0.0;
-	c->plane.x = 0.0;
-	c->plane.y = 0.66;
+	// c->pos.x = m->height / 2.0;
+	// c->pos.y = m->width / 2.0;
+	// c->dir.x = -1.0;
+	// c->dir.y = 0.0;
+	// c->plane.x = 0.0;
+	// c->plane.y = 0.66;
 	row = 0;
 	while (row < m->height)
 	{

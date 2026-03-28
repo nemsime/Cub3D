@@ -3,7 +3,7 @@
 static void print_map(t_game *g)
 {
 	t_map m = g->map;
-	for (int i = 0; i < m.height + 1; i++){
+	for (int i = 0; i < m.height + 2; i++){
 	for (int j = 0; j < m.width + 2; j++)
 
 		printf("%c ", m.grid[i][j]);

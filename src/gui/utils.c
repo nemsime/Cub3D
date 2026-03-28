@@ -28,21 +28,36 @@ static int	key_hook(int key, t_game *g)
 
 	if (key == 65307)
 		return (close_window(g), 0);
-	else if (key == 97 && c->pos.x <= g->map.width - 0.1)
-		c->pos.x += 0.1;
-	else if (key == 100 && c->pos.x >= 0.1)
-		c->pos.x -= 0.1;
-	else if (key == 119 && c->pos.y <= g->map.height - 0.1)
-		c->pos.y += 0.1;
-	else if (key == 115 && c->pos.y >= 0.1)
-		c->pos.y -= 0.1;
-	else if (key == 65361)
-		c->plane.x += 0.1;
-	else if (key == 65363)
-		c->plane.x -= 0.1;
+	else if (key == 97 && c->pos.x <= g->map.width - 0.1) 	// a
+		if (c->dir.y) c->pos.x += c->dir.y * 0.1;
+		else c->pos.y -= c->dir.x * 0.1;
+	else if (key == 100 && c->pos.x >= 0.1) 				// d 
+		if (c->dir.y) c->pos.x -= c->dir.y * 0.1;
+		else c->pos.y += c->dir.x * 0.1;
+	else if (key == 119 && c->pos.y <= g->map.height - 0.1) // w
+		if (c->dir.y) c->pos.y += c->dir.y * 0.1;
+		else c->pos.x +=  c->dir.x * 0.1;
+	else if (key == 115 && c->pos.y >= 0.1) 				// s
+		if (c->dir.y) c->pos.y -= c->dir.y * 0.1;
+		else c->pos.x -=  c->dir.x * 0.1;
+	else if (key == 65361) { // left
+		if (c->dir.y != 0) {c->dir.x = c->dir.y; c->dir.y = 0;}
+		else {
+			c->dir.y = -1 * c->dir.x; 
+			c->dir.x = 0;
+	}
+	}
+	else if (key == 65363) { // right
+		if (c->dir.x != 0) c->dir.y = c->dir.x, c->dir.x = 0;
+		else c->dir.x = -1 * c->dir.y , c->dir.y = 0;
+	}
+
+	c->plane.x = -c->dir.y * 0.66;
+	c->plane.y = c->dir.x * 0.66;
 	
 	// check_pos()?
-	// printf("c->pos.x: %f, c->pos.y: %f\n%d", c->pos.x, c->pos.y, key);
+	printf("c->pos.x: %f, c->pos.y: %f\tkey:%d\tdirX:%f\tdirY:%f\n", 
+		c->pos.x, c->pos.y, key, c->dir.x, c->dir.y);
 	draw(g);
 	return (0);
 }
