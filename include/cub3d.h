@@ -10,6 +10,17 @@
 # define WIN_W 1000
 # define WIN_H 1000
 
+#define COLOR_F 		0x00606060
+#define COLOR_C			0x00404040
+#define COLOR_N			0x00804040
+#define COLOR_E			0x00802040
+
+#define MM_PADING	10
+#define MMCOL		0x00303065
+#define MMCOLW		0x008080A5
+#define MMCOLP		0x00A58080
+#define MMSCALE		13
+
 /* ENUMS */
 
 typedef enum e_id

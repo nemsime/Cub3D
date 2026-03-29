@@ -11,10 +11,6 @@ static char	*MAP = "\
 #define MAP_STR_COLS	7
 #define MAP_STR_ROWS	5
 */
-#define COLOR_F 		0x00606060
-#define COLOR_C			0x00404040
-#define COLOR_N			0x00804040
-#define COLOR_E			0x00802040
 
 #define MINVAL(x, min)			if(x < min) x = min
 #define MAXVAL(x, max)			if(x > max) x = max
