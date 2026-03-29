@@ -1,17 +1,5 @@
 #include "../../include/cub3d.h"
 
-/*
-static char	*MAP = "\
-1111111\
-1001001\
-1010001\
-1100N01\
-1111111";
-
-#define MAP_STR_COLS	7
-#define MAP_STR_ROWS	5
-*/
-
 #define MINVAL(x, min)			if(x < min) x = min
 #define MAXVAL(x, max)			if(x > max) x = max
 
@@ -22,12 +10,6 @@ void	init_map_raycast(t_map* m, t_coord* c)
 	int		row;
 	char	ch;
 	
-	// c->pos.x = m->height / 2.0;
-	// c->pos.y = m->width / 2.0;
-	// c->dir.x = -1.0;
-	// c->dir.y = 0.0;
-	// c->plane.x = 0.0;
-	// c->plane.y = 0.66;
 	row = 0;
 	while (row < m->height)
 	{
@@ -72,7 +54,6 @@ int	rc_hit_wall(t_map* m, int col, int row)
 {
 	char	ch;
 
-	/* m->grid is indexed as grid[row][col] */
 	if (col < 0 || row < 0 )
 		return (1);
 	ch = m->grid[row][col];

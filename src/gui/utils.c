@@ -25,21 +25,22 @@ static int	close_window(t_game *g)
 static int	key_hook(int key, t_game *g)
 {
 	t_coord *c = &g->coord;
+	t_dpoint res = {c->pos.x, c->pos.y};
 
 	if (key == 65307)
 		return (close_window(g), 0);
-	else if (key == 97 && c->pos.x <= g->map.width - 0.1) 	// a
-		if (c->dir.y) c->pos.x += c->dir.y * 0.1;
-		else c->pos.y -= c->dir.x * 0.1;
+	else if (key == 97 && c->pos.x <= g->map.width) 	// a
+		if (c->dir.y) res.x = c->pos.x + c->dir.y * 0.1;
+		else res.y = c->pos.y - c->dir.x * 0.1;
 	else if (key == 100 && c->pos.x >= 0.1) 				// d 
-		if (c->dir.y) c->pos.x -= c->dir.y * 0.1;
-		else c->pos.y += c->dir.x * 0.1;
-	else if (key == 119 && c->pos.y <= g->map.height - 0.1) // w
-		if (c->dir.y) c->pos.y += c->dir.y * 0.1;
-		else c->pos.x +=  c->dir.x * 0.1;
+		if (c->dir.y) res.x = c->pos.x - c->dir.y * 0.1;
+		else res.y = c->pos.y + c->dir.x * 0.1;
+	else if (key == 119 && c->pos.y <= g->map.height) // w
+		if (c->dir.y) res.y = c->pos.y + c->dir.y * 0.1;
+		else res.x = c->pos.x + c->dir.x * 0.1;
 	else if (key == 115 && c->pos.y >= 0.1) 				// s
-		if (c->dir.y) c->pos.y -= c->dir.y * 0.1;
-		else c->pos.x -=  c->dir.x * 0.1;
+		if (c->dir.y) res.y = c->pos.y - c->dir.y * 0.1;
+		else res.x = c->pos.x - c->dir.x * 0.1;
 	else if (key == 65361) // left
 		if (c->dir.y != 0) {c->dir.x = c->dir.y; c->dir.y = 0;}
 		else {
@@ -53,6 +54,8 @@ static int	key_hook(int key, t_game *g)
 
 	c->plane.x = -c->dir.y * 0.66;
 	c->plane.y = c->dir.x * 0.66;
+	if (!rc_hit_wall(&g->map, res.x, res.y))
+		c->pos.x = res.x, c->pos.y = res.y;
 	
 	// check_pos()?
 	// printf("c->pos.x: %f, c->pos.y: %f\tkey:%d\tdirX:%f\tdirY:%f\n", 
