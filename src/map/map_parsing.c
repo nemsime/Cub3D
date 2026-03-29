@@ -1,33 +1,45 @@
 #include "../../include/cub3d.h"
 
-int map_parsing(int fd, char *top_line, t_game *game)
+int	validate_map_line(char *line, t_game *game)
 {
-    char *cur_line;
-	int i;
-    while (top_line)
-    {
-        cur_line = get_next_line(fd);
-        trim_right(top_line);
-        if (is_empty(top_line) && cur_line)
-            return (set_error(game, "ERR: empty line in map\n"),free(cur_line), free(top_line), 0);
-        i = 0;
-        while (top_line[i])
-        {
-            if (!ft_strchr(" 01NSEW", top_line[i]))
-                return (set_error(game, "ERROR: invalid character in map\n"), free(cur_line), free(top_line), 0);
-            if (is_player(top_line, i))
-                game->assets.state.player_count++;
-            i++;
-        }
-        if (!add_map_line(&game->map, top_line))
-            return (set_error(game, "ERR: malloc failed while parsing map\n"),free(cur_line), free(top_line), 0);
-        free(top_line);
-        top_line = cur_line;
-    }
-    return (1);
+	int i = 0;
+
+	while (line[i])
+	{
+		if (!ft_strchr(" 01NSEW", line[i]))
+			return (set_error(game, "ERROR: invalid character in map\n"), 0);
+		if (is_player(line, i))
+			game->assets.state.player_count++;
+		i++;
+	}
+	return (1);
 }
 
-int add_map_line(t_map *map, char *line)
+t_map_node *map_parsing(int fd, char *top_line, t_game *game)
+{
+	char *cur_line;
+	t_map_list list;
+
+	ft_memset(&list, 0, sizeof(t_map_list));
+	while (top_line)
+	{
+		cur_line = get_next_line(fd);
+		trim_right(top_line);
+		if (is_empty(top_line) && cur_line)
+			return (set_error(game, "ERR: empty line in map\n"),free(cur_line), free(top_line), NULL);
+		if (!validate_map_line(top_line, game))
+			return (free(cur_line), free(top_line), NULL);
+		if (!add_map_line(&list, top_line))
+			return (set_error(game, "ERR: malloc failed while parsing map\n"),free(cur_line), free(top_line), NULL);
+		free(top_line);
+		top_line = cur_line;
+	}
+	game->map.width = list.width;
+	game->map.height = list.height;
+	return (list.head);
+}
+
+int add_map_line(t_map_list *list, char *line)
 {
     t_map_node *new_node;
     int len;
@@ -39,20 +51,20 @@ int add_map_line(t_map *map, char *line)
     if (!new_node->line)
         return (free(new_node), 0);
     new_node->next = NULL;
-    if (!map->head)
+    if (!list->head)
     {
-        map->head = new_node;
-        map->tail = new_node;
+        list->head = new_node;
+        list->tail = new_node;
     }
     else
     {
-        map->tail->next = new_node;
-        map->tail = new_node;
+        list->tail->next = new_node;
+        list->tail = new_node;
     }
     len = ft_strlen(line);
-    if (len > map->width)
-        map->width = len;
-    map->height++;
+    if (len > list->width)
+        list->width = len;
+    list->height++;
     return (1);
 }
 

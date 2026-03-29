@@ -12,7 +12,7 @@ char *create_map_row(const char *line, int width)
     return row;
 }
 
-int map_copy(t_map *map)
+int map_copy(t_map_node *head, t_map *map)
 {
     t_map_node *node;
     int i;
@@ -24,7 +24,7 @@ int map_copy(t_map *map)
     map->grid[i++] = create_map_row(NULL, map->width);
     if (!map->grid[i-1])
         return 0;
-    node = map->head;
+    node = head;
     while (node)
     {
         map->grid[i++] = create_map_row(node->line, map->width);

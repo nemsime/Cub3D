@@ -1,31 +1,56 @@
 #include "../../include/cub3d.h"
 
-int validate_file(int fd, t_game *game)
+char	*process_assets(int fd, t_game *game)
 {
 	char	*line;
+
 	line = get_next_line(fd);
 	if (!line || line[0] == '\0')
 	{
 		if (line)
 			free(line);
-		return (set_error(game, "ERR: empty or corrupted file\n"),0);
+		set_error(game, "ERR: empty or corrupted file\n");
+		return (NULL);
 	}
 	while (line)
 	{
 		if (is_wall(line))
-			break;
+			return (line);
 		if (!process_elements(line, game))
-			return (free(line), 0);
+			return (free(line), NULL);
 		free(line);
 		line = get_next_line(fd);
 	}
-	if (check_flag(game, CHECK_MISSING) || (!line || line[0] == '\0' || line[0] == '\n'))
-		return (set_error(game, "ERR: missing assets or no map\n"),free(line), 0);
-	if (!map_parsing(fd, line, game))
+	set_error(game, "ERR: missing assets or no map\n");
+	return (NULL);
+}
+
+int	validate_map(int fd, char *first_line, t_game *game)
+{
+	t_map_node	*map_head;
+
+	if (check_flag(game, CHECK_MISSING))
+		return (set_error(game, "ERR: missing assets or no map\n"), free(first_line), 0);
+	map_head = map_parsing(fd, first_line, game);
+	if (!map_head)
 		return (0);
-	if (!map_validation(game))
+	if (!map_copy(map_head, &game->map))
+	{
+		free_map(map_head);
+		return (set_error(game, "ERR: memory allocation failed while copying map\n"), 0);
+	}
+	free_map(map_head);
+	return (map_validation(game));
+}
+
+int	validate_file(int fd, t_game *game)
+{
+	char	*first_line;
+
+	first_line = process_assets(fd, game);
+	if (!first_line)
 		return (0);
-	return (1);
+	return (validate_map(fd, first_line, game));
 }
 
 void	validation_stage(int argc, char **argv, t_game *game)
