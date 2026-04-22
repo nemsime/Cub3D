@@ -9,6 +9,7 @@
 
 # define WIN_W 1000
 # define WIN_H 1000
+# define FOV 0.6
 
 #define COLOR_F 		0x00606060
 #define COLOR_C			0x00404040

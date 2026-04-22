@@ -49,7 +49,7 @@ test: all
 	./$(NAME) maps/good/matrix.cub
 
 val: all
-	valgrind --leak-check=full --show-leak-kinds=all ./$(NAME) maps/good/wood.cub
+	valgrind --leak-check=full --show-leak-kinds=all ./$(NAME) maps/good/matrix.cub
 
 re: fclean all
 

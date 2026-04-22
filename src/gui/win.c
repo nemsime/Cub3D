@@ -41,8 +41,8 @@ void	init_map_raycast(t_map* m, t_coord* c)
 					c->dir.x = -1.0;
 					c->dir.y = 0.0;
 				}
-				c->plane.x = -c->dir.y * 0.66;
-				c->plane.y = c->dir.x * 0.66;
+				c->plane.x = -c->dir.y * FOV;
+				c->plane.y = c->dir.x * FOV;
 			}
 			col++;
 		}
@@ -165,7 +165,5 @@ void	draw(t_game *g)
 		x++;
 	}
 	add_minimap(&g->map, img, &g->coord);
-	put_color(img, x - 1, 0, 0);
-	put_color(img, 0, WIN_W - 1, 355);
 	mlx_put_image_to_window(g->mlx, g->win, img->img, 0, 0);
 }

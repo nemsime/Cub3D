@@ -1,4 +1,5 @@
 #include "../../include/cub3d.h"
+#include <math.h>
 
 
 void put_color(t_img *img, int x, int y, int color)
@@ -26,34 +27,52 @@ static int	key_hook(int key, t_game *g)
 {
 	t_coord *c = &g->coord;
 	t_dpoint res = {c->pos.x, c->pos.y};
+	double	move;
+	double	rot;
+	double	old_dir_x;
+	double	old_plane_x;
 
+	move = 0.1;
 	if (key == 65307)
 		return (close_window(g), 0);
-	else if (key == 97 && c->pos.x <= g->map.width) 	// a
-		if (c->dir.y) res.x = c->pos.x + c->dir.y * 0.1;
-		else res.y = c->pos.y - c->dir.x * 0.1;
-	else if (key == 100 && c->pos.x >= 0.1) 				// d 
-		if (c->dir.y) res.x = c->pos.x - c->dir.y * 0.1;
-		else res.y = c->pos.y + c->dir.x * 0.1;
-	else if (key == 119 && c->pos.y <= g->map.height) // w
-		if (c->dir.y) res.y = c->pos.y + c->dir.y * 0.1;
-		else res.x = c->pos.x + c->dir.x * 0.1;
-	else if (key == 115 && c->pos.y >= 0.1) 				// s
-		if (c->dir.y) res.y = c->pos.y - c->dir.y * 0.1;
-		else res.x = c->pos.x - c->dir.x * 0.1;
-	else if (key == 65361) // left
-		if (c->dir.y != 0) {c->dir.x = c->dir.y; c->dir.y = 0;}
-		else {
-			c->dir.y = -1 * c->dir.x; 
-			c->dir.x = 0;
+	else if (key == 119) // w
+	{
+		res.x = c->pos.x + c->dir.x * move;
+		res.y = c->pos.y + c->dir.y * move;
 	}
-	else if (key == 65363) { // right
-		if (c->dir.x != 0) c->dir.y = c->dir.x, c->dir.x = 0;
-		else c->dir.x = -1 * c->dir.y , c->dir.y = 0;}
+	else if (key == 115) // s
+	{
+		res.x = c->pos.x - c->dir.x * move;
+		res.y = c->pos.y - c->dir.y * move;
+	}
+	else if (key == 97) // a
+	{
+		res.x = c->pos.x + c->dir.y * move;
+		res.y = c->pos.y - c->dir.x * move;
+	}
+	else if (key == 100) // d
+	{
+		res.x = c->pos.x - c->dir.y * move;
+		res.y = c->pos.y + c->dir.x * move;
+	}
+	else if (key == 65361 || key == 65363) // left/right smooth rotation
+	{
+		rot = 0.1;
+		if (key == 65363)
+			rot = -rot;
+		old_dir_x = c->dir.x;
+		c->dir.x = c->dir.x * cos(rot) - c->dir.y * sin(rot);
+		c->dir.y = old_dir_x * sin(rot) + c->dir.y * cos(rot);
+		old_plane_x = c->plane.x;
+		c->plane.x = c->plane.x * cos(rot) - c->plane.y * sin(rot);
+		c->plane.y = old_plane_x * sin(rot) + c->plane.y * cos(rot);
+	}
 
-
-	c->plane.x = -c->dir.y * 0.66;
-	c->plane.y = c->dir.x * 0.66;
+	if (key != 65361 && key != 65363)
+	{
+		c->plane.x = -c->dir.y * FOV;
+		c->plane.y = c->dir.x * FOV;
+	}
 	if (!rc_hit_wall(&g->map, res.x, res.y))
 		c->pos.x = res.x, c->pos.y = res.y;
 	
