@@ -61,7 +61,7 @@ int	rc_hit_wall(t_map* m, int col, int row)
 		return (1);
 	if (ch == '0')
 		return (0);
-	if (ch == ' ')
+	if (ch == '/')
 		return (-1);
 	if (ch == 'N' || ch == 'S' || ch == 'E' || ch == 'W')
 		return (0);
