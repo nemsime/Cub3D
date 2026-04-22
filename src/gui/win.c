@@ -61,7 +61,7 @@ int	rc_hit_wall(t_map* m, int col, int row)
 		return (1);
 	if (ch == '0')
 		return (0);
-	if (ch == '/')
+	if (ch == ' ')
 		return (-1);
 	if (ch == 'N' || ch == 'S' || ch == 'E' || ch == 'W')
 		return (0);
@@ -165,5 +165,7 @@ void	draw(t_game *g)
 		x++;
 	}
 	add_minimap(&g->map, img, &g->coord);
+	put_color(img, x - 1, 0, 0);
+	put_color(img, 0, WIN_W - 1, 355);
 	mlx_put_image_to_window(g->mlx, g->win, img->img, 0, 0);
 }

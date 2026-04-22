@@ -1,7 +1,7 @@
-NO textures/matrix.xpm
-SO textures/matrix.xpm
-WE textures/matrix.xpm
-EA textures/matrix.xpm
+NO textures/wood.xpm
+SO textures/wood.xpm
+WE textures/wood.xpm
+EA textures/wood.xpm
 
 F 0,0,0
 C 0,0,0
@@ -17,9 +17,6 @@ C 0,0,0
 
 
 
-
-len = 20
-index = 19
 
 
 

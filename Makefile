@@ -46,7 +46,7 @@ fclean: clean
 	rm -rf $(NAME)
 
 test: all
-	./$(NAME) maps/good/wood.cub
+	./$(NAME) maps/good/matrix.cub
 
 val: all
 	valgrind --leak-check=full --show-leak-kinds=all ./$(NAME) maps/good/wood.cub
