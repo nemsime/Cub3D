@@ -73,7 +73,7 @@ static int	key_hook(int key, t_game *g)
 		c->plane.x = -c->dir.y * FOV;
 		c->plane.y = c->dir.x * FOV;
 	}
-	if (!rc_hit_wall(&g->map, res.x, res.y))
+	if (!hit_wall(&g->map, res.x, res.y))
 		c->pos.x = res.x, c->pos.y = res.y;
 	
 	// check_pos()?
@@ -98,7 +98,7 @@ void	start_gui(t_game *g)
 	init_image(&g->img, g->mlx);
 	init_image(&g->img1, g->mlx);
 	g->img_n = 1;
-	init_map_raycast(&g->map, &g->coord);
+	init_map(&g->map, &g->coord);
 	draw(g);
 	mlx_hook(g->win, 17, 0, close_window, g);
 	mlx_hook(g->win, 2, 1L << 0, key_hook, g);

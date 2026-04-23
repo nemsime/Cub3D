@@ -1,6 +1,7 @@
 CC = cc
 SRCS = \
 src/main.c \
+src/gui/init.c \
 src/gui/win.c \
 src/gui/minimap.c \
 src/gui/utils.c \

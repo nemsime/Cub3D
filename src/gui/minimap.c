@@ -29,7 +29,7 @@ void	add_minimap(t_map *m, t_img* i, t_coord* c)
 		y = -1;
 		while(++y < (m->height + 2) * MMSCALE) 
 		{
-			char res = rc_hit_wall(m, x/MMSCALE, y/MMSCALE);
+			char res = hit_wall(m, x/MMSCALE, y/MMSCALE);
 			if (res == 1) 				//wall
 				put_color(i, x + MM_PADING, y + MM_PADING, MMCOLW);
 			else if (res == 0)
