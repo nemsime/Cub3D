@@ -123,6 +123,14 @@ typedef struct s_coord
 	int				draw_end;
 }					t_coord;
 
+typedef struct s_tex
+{
+	t_img		*img;
+	double		step;
+	double		pos;
+	int			x;
+}					t_tex;
+
 typedef struct s_game
 {
 	t_map			map;
@@ -147,7 +155,8 @@ void	draw(t_game *);
 int		hit_wall(t_map* m, int col, int row);
 void	init_map(t_map* m, t_coord* c);
 void	init_image(t_img *i, void *mlx, char *xpm);
-// int		key_hook(int key, t_game *g);
+void	draw_col(t_game *g, int x, t_img *img);
+int	get_tex_color_img(t_img *t, int tex_x, int tex_y);
 
 /* ==================== PARSING ==================== */
 
