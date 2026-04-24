@@ -113,6 +113,14 @@ typedef struct s_coord
 	t_dpoint		pos;
 	t_dpoint		dir;
 	t_dpoint		plane;
+	t_dpoint		ray;
+	t_dpoint		delta;
+	t_dpoint		sideDist;
+	t_point			step;
+	t_point			map;
+	char			side;
+	int				draw_start;
+	int				draw_end;
 }					t_coord;
 
 typedef struct s_game
