@@ -14,13 +14,13 @@ void put_color(t_img *img, int x, int y, int color)
 
 static int	close_window(t_game *g)
 {
+	free_game_content(g);
 	mlx_destroy_image(g->mlx, g->img1.img);
 	mlx_destroy_image(g->mlx, g->img.img);
 	mlx_destroy_window(g->mlx, g->win);
 	mlx_destroy_display(g->mlx);
 	free(g->mlx);
 	g->mlx = NULL;
-	free_game_content(g);
 	exit(0);
 }
 

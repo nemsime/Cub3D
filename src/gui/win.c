@@ -39,8 +39,6 @@ static int get_tex_color_img(t_img *t, int tex_x, int tex_y)
 
 static t_img *select_wall_texture_img(t_game *g, int side, t_dpoint ray)
 {
-	if (!g)
-		return (NULL);
 	if (side == 0)
 	{
 		if (ray.x > 0)
@@ -77,7 +75,6 @@ static void draw_col(t_game *g, int side, t_dpoint sideDist, t_dpoint delta, t_i
 	MINVAL(draw_start, 0);
 	draw_end = line_height / 2 + WIN_H / 2;
 	MAXVAL(draw_end, WIN_H - 1);
-	// color = side ? COLOR_N : COLOR_E;
 	tex_img = select_wall_texture_img(g, side, ray);
 	if (side == 0)
 		wall_x = c->pos.y + perp_wall_dist * ray.y;
@@ -106,8 +103,6 @@ static void draw_col(t_game *g, int side, t_dpoint sideDist, t_dpoint delta, t_i
 	y = draw_start;
 	while (y <= draw_end)
 	{
-		// if (tex_img && tex_img->img)
-		// {
 			tex_y = (int)tex_pos;
 			if (tex_y < 0) tex_y = 0;
 			if (tex_y >= tex_img->h) tex_y = tex_img->h - 1;
@@ -118,9 +113,6 @@ static void draw_col(t_game *g, int side, t_dpoint sideDist, t_dpoint delta, t_i
 						| (((color & 0x0000FF) >> 1) & 0x00007F) );
 			put_color(img, x, y, color);
 			tex_pos += tex_step;
-		// }
-		// else
-		// 	put_color(img, x, y, side ? COLOR_N : COLOR_E);
 		y++;
 	}
 	while (y < WIN_H) put_color(img, x, y, g->assets.floor_color), y++;

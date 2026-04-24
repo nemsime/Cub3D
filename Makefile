@@ -28,6 +28,8 @@ OBJDIR = obj
 MLX_C =  -I/usr/include -Imlx_linux -O3 
 MLX_F = -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 
+TEST_MAP = maps/good/matrix.cub
+
 all: $(NAME)
 
 $(NAME): $(OBJ)
@@ -47,10 +49,10 @@ fclean: clean
 	rm -rf $(NAME)
 
 test: all
-	./$(NAME) maps/good/matrix.cub
+	./$(NAME) $(TEST_MAP)
 
 val: all
-	valgrind --leak-check=full --show-leak-kinds=all ./$(NAME) maps/good/matrix.cub
+	valgrind --leak-check=full --show-leak-kinds=all ./$(NAME) $(TEST_MAP)
 
 re: fclean all
 
