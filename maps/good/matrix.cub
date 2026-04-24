@@ -1,7 +1,7 @@
-NO textures/wood.xpm
-SO textures/wood.xpm
-WE textures/wood.xpm
-EA textures/wood.xpm
+NO textures/wall_2.xpm
+SO textures/wall_1.xpm
+WE textures/wall_3.xpm
+EA textures/wall_4.xpm
 
 F 220,100,0
 C 225,30,0
