@@ -76,7 +76,6 @@ static void	draw_col(t_game *g, int side, t_dpoint sideDist, t_dpoint delta,
 	y = 0;
 	while (y < draw_start)
 		put_color(img, x, y, g->assets.ceiling_color), y++;
-	y = draw_start;
 	while (y <= draw_end)
 	{
 		tex_y = (int)tex_pos;
@@ -85,8 +84,6 @@ static void	draw_col(t_game *g, int side, t_dpoint sideDist, t_dpoint delta,
 		if (tex_y >= tex_img->h)
 			tex_y = tex_img->h - 1;
 		color = get_tex_color_img(tex_img, tex_x, tex_y);
-		// if (side == 1)
-		// 	color = ((((color & 0xFF0000) >> 1) & 0x7F0000) | (((color & 0x00FF00) >> 1) & 0x007F00) | (((color & 0x0000FF) >> 1) & 0x00007F));
 		put_color(img, x, y, color);
 		tex_pos += tex_step;
 		y++;

@@ -11,16 +11,15 @@
 # define WIN_H 1000
 # define FOV 0.6
 
-// #define COLOR_F 		0x00606060
-// #define COLOR_C			0x00404040
-// #define COLOR_N			0x00804040
-// #define COLOR_E			0x00802040
-
 #define MM_PADING	10
 #define MMCOL		0x00303065
 #define MMCOLW		0x008080A5
 #define MMCOLP		0x00A58080
 #define MMSCALE		13
+
+#define MINVAL(x, min) if (x < min) x = min
+#define MAXVAL(x, max) if (x > max) x = max
+// #define INRANGE(x, mid, eps) (x >= mid - eps && x <= mid + eps)
 
 /* ENUMS */
 
@@ -140,7 +139,7 @@ void	draw(t_game *);
 int		hit_wall(t_map* m, int col, int row);
 void	init_map(t_map* m, t_coord* c);
 void	init_image(t_img *i, void *mlx, char *xpm);
-// void	init_game(t_game *game);
+// int		key_hook(int key, t_game *g);
 
 /* ==================== PARSING ==================== */
 

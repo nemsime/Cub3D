@@ -1,6 +1,7 @@
 #include "../../include/cub3d.h"
 
-static void init_side( t_coord* c, char ch) {
+static void	init_side(t_coord *c, char ch)
+{
 	if (ch == 'N')
 	{
 		c->dir.x = 0.0;
@@ -23,12 +24,12 @@ static void init_side( t_coord* c, char ch) {
 	}
 }
 
-void	init_map(t_map* m, t_coord* c)
+void	init_map(t_map *m, t_coord *c)
 {
 	int		col;
 	int		row;
 	char	ch;
-	
+
 	row = 0;
 	while (row < m->height)
 	{

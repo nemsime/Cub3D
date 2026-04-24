@@ -5,6 +5,7 @@ src/gui/init.c \
 src/gui/win.c \
 src/gui/minimap.c \
 src/gui/utils.c \
+src/gui/start.c \
 src/parsing/parse_elements.c \
 src/parsing/parse_elements_utils.c \
 src/parsing/parse_assets.c \
