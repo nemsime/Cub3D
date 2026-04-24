@@ -45,8 +45,6 @@ static void draw_col(int side, t_dpoint sideDist, t_dpoint delta, t_img *img, in
 	while (y < WIN_H) put_color(img, x, y, COLOR_F), y++;
 };
 
-// static int rc_loop(t_dpoint ideD, t_dpoint map)
-
 static void	raycast(t_map *m, t_img *img, t_coord *c, int x)
 {
 	double		camera_x;
@@ -68,9 +66,14 @@ static void	raycast(t_map *m, t_img *img, t_coord *c, int x)
 	step.x = 1 + (-2 * (ray.x < 0));
 	step.y = 1 + (-2 * (ray.y < 0));
 	sideDist.x = ((1 && (ray.x < 0)) + c->pos.x - map.x) * delta.x;
-	sideDist.x = ((1 && ray.x > 0) + (2 * (ray.x < 0) - 1)*(c->pos.x - map.x)) * delta.x;
-	sideDist.y = ((1 && (ray.y < 0)) + c->pos.y - map.y) * delta.y;
-	sideDist.y = ((1 && ray.y > 0) + (2 * (ray.y < 0) - 1)*(c->pos.y - map.y)) * delta.y;
+	if (ray.x < 0)
+		sideDist.x = (c->pos.x - map.x) * delta.x;
+	else
+		sideDist.x = (map.x + 1.0 - c->pos.x) * delta.x;
+	if (ray.y < 0)
+		sideDist.y = (c->pos.y - map.y) * delta.y;
+	else
+		sideDist.y = (map.y + 1.0 - c->pos.y) * delta.y;
 	hit = 0;
 	while (hit == 0)
 	{

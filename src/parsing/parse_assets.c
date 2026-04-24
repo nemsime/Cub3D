@@ -3,13 +3,19 @@
 void assets_input(t_game *game, t_id id, char *texture, int color)
 {
     if (id == ID_NO)
-        game->assets.no = ft_strdup(texture);
+		init_image(game->assets.no, game->mlx, texture);
+        // game->assets.no = ft_strdup(texture);
     else if (id == ID_SO)
-        game->assets.so = ft_strdup(texture);
+		init_image(game->assets.so, game->mlx, texture);
+
+        // game->assets.so = ft_strdup(texture);
     else if (id == ID_WE)
-        game->assets.we = ft_strdup(texture);
+		init_image(game->assets.we, game->mlx, texture);
+
+        // game->assets.we = ft_strdup(texture);
     else if (id == ID_EA)
-        game->assets.ea = ft_strdup(texture);
+		init_image(game->assets.ea, game->mlx, texture);
+        // game->assets.ea = ft_strdup(texture);
     else if (id == ID_F)
         game->assets.floor_color = color;
     else if (id == ID_C)

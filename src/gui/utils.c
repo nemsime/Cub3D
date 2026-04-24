@@ -58,7 +58,7 @@ static int	key_hook(int key, t_game *g)
 	else if (key == 65361 || key == 65363) // left/right smooth rotation
 	{
 		rot = 0.1;
-		if (key == 65363)
+		if (key == 65361)
 			rot = -rot;
 		old_dir_x = c->dir.x;
 		c->dir.x = c->dir.x * cos(rot) - c->dir.y * sin(rot);
@@ -83,9 +83,14 @@ static int	key_hook(int key, t_game *g)
 	return (0);
 }
 
-static void	init_image(t_img *i, void *mlx)
+void	init_image(t_img *i, void *mlx, char *xpm)
 {
-	i->img = mlx_new_image(mlx, WIN_W, WIN_H);
+	i->w = WIN_W;
+	i->h = WIN_H;
+	if (!xpm)
+		i->img = mlx_new_image(mlx, WIN_W, WIN_H);
+	else 
+		i->img = mlx_xpm_file_to_image(mlx, xpm, &i->w, &i->h);
 	i->addr = mlx_get_data_addr(i->img, &i->bits_per_pixel, &i->line_length,
 			&i->endian);
 	i->bytes_per_pixel = i->bits_per_pixel / 8;
@@ -95,8 +100,8 @@ void	start_gui(t_game *g)
 {
 	g->mlx = mlx_init();
 	g->win = mlx_new_window(g->mlx, WIN_W, WIN_H, "cub3D");
-	init_image(&g->img, g->mlx);
-	init_image(&g->img1, g->mlx);
+	init_image(&g->img, g->mlx, 0);
+	init_image(&g->img1, g->mlx, 0);
 	g->img_n = 1;
 	init_map(&g->map, &g->coord);
 	draw(g);

@@ -70,18 +70,6 @@ typedef struct s_parse_state
 	int player_count;
 } t_parse_state;
 
-typedef struct s_assets
-{
-	char			*no;
-	char			*so;
-	char			*we;
-	char			*ea;
-
-	int				floor_color;
-	int				ceiling_color;
-	t_parse_state	state;
-} t_assets;
-
 
 typedef struct s_point
 {
@@ -104,7 +92,21 @@ typedef struct s_img
 	int				bytes_per_pixel;
 	int				line_length;
 	int				endian;
+	int 			w;
+	int 			h;
 }					t_img;
+
+typedef struct s_assets
+{
+	t_img			*no;
+	t_img			*so;
+	t_img			*we;
+	t_img			*ea;
+
+	int				floor_color;
+	int				ceiling_color;
+	t_parse_state	state;
+} t_assets;
 
 typedef struct s_coord
 {
@@ -136,6 +138,7 @@ void	init_map_raycast(t_map*, t_coord*); // temp funciton
 void	draw(t_game *);
 int		hit_wall(t_map* m, int col, int row);
 void	init_map(t_map* m, t_coord* c);
+void	init_image(t_img *i, void *mlx, char *xpm);
 // void	init_game(t_game *game);
 
 /* ==================== PARSING ==================== */
