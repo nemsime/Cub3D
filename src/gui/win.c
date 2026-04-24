@@ -1,43 +1,20 @@
 #include "../../include/cub3d.h"
 
-#define MINVAL(x, min)			if(x < min) x = min
-#define MAXVAL(x, max)            if(x > max) x = max
 
-int    hit_wall(t_map* m, int col, int row)
+static int	get_tex_color_img(t_img *t, int tex_x, int tex_y)
 {
-	char    ch;
-
-	if (col < 0 || row < 0)
-		return (1);
-	if ((int)ft_strlen(m->grid[row]) <= col)
-		return (1);
-	ch = m->grid[row][col];
-	if (ch == '1')
-		return (1);
-	if (ch == '0')
-		return (0);
-	if (ch == '/')
-		return (-1);
-	if (ch == 'N' || ch == 'S' || ch == 'E' || ch == 'W')
-		return (0);
-	return (1);
-}
-
-static int get_tex_color_img(t_img *t, int tex_x, int tex_y)
-{
-	int pixel;
+	int	pixel;
 
 	if (!t || !t->addr)
 		return (0);
 	if (tex_x < 0 || tex_y < 0 || tex_x >= t->w || tex_y >= t->h)
 		return (0);
-	pixel = tex_y * t->line_length + tex_x * t->bytes_per_pixel;
-	return ((unsigned char)t->addr[pixel]
-		| ((unsigned char)t->addr[pixel + 1] << 8)
-		| ((unsigned char)t->addr[pixel + 2] << 16));
+	pixel = tex_y * t->line_length + (t->w - tex_x) * t->bytes_per_pixel;
+	return ((unsigned char)t->addr[pixel] | ((unsigned char)t->addr[pixel
+			+ 1] << 8) | ((unsigned char)t->addr[pixel + 2] << 16));
 }
 
-static t_img *select_wall_texture_img(t_game *g, int side, t_dpoint ray)
+static t_img	*select_wall_texture_img(t_game *g, int side, t_dpoint ray)
 {
 	if (side == 0)
 	{
@@ -50,20 +27,21 @@ static t_img *select_wall_texture_img(t_game *g, int side, t_dpoint ray)
 	return (g->assets.so);
 }
 
-static void draw_col(t_game *g, int side, t_dpoint sideDist, t_dpoint delta, t_img *img, int x, t_coord *c, t_dpoint ray)
+static void	draw_col(t_game *g, int side, t_dpoint sideDist, t_dpoint delta,
+		t_img *img, int x, t_coord *c, t_dpoint ray)
 {
-	int            line_height;
-	int            draw_start;
-	int            draw_end;
-	int            y;
-	double         perp_wall_dist;
-	int            color;
-	t_img         *tex_img;
-	int            tex_x;
-	double         wall_x;
-	double         tex_step;
-	double         tex_pos;
-	int            tex_y;
+	int		line_height;
+	int		draw_start;
+	int		draw_end;
+	int		y;
+	double	perp_wall_dist;
+	int		color;
+	t_img	*tex_img;
+	int		tex_x;
+	double	wall_x;
+	double	tex_step;
+	double	tex_pos;
+	int		tex_y;
 
 	if (side == 0)
 		perp_wall_dist = (sideDist.x - delta.x);
@@ -81,53 +59,52 @@ static void draw_col(t_game *g, int side, t_dpoint sideDist, t_dpoint delta, t_i
 	else
 		wall_x = c->pos.x + perp_wall_dist * ray.x;
 	wall_x -= floor(wall_x);
-
 	tex_x = 0;
 	tex_step = 0.0;
 	tex_pos = 0.0;
-	if (tex_img && tex_img->img)
-	{
-		tex_x = (int)(wall_x * (double)tex_img->w);
-		if (tex_x < 0) tex_x = 0;
-		if (tex_x >= tex_img->w) tex_x = tex_img->w - 1;
-		if (side == 0 && ray.x > 0)
-			tex_x = tex_img->w - tex_x - 1;
-		if (side == 1 && ray.y < 0)
-			tex_x = tex_img->w - tex_x - 1;
-		tex_step = 1.0 * tex_img->h / line_height;
-		tex_pos = (draw_start - WIN_H / 2.0 + line_height / 2.0) * tex_step;
-	}
-
+	tex_x = (int)(wall_x * (double)tex_img->w);
+	if (tex_x < 0)
+		tex_x = 0;
+	if (tex_x >= tex_img->w)
+		tex_x = tex_img->w - 1;
+	if (side == 0 && ray.x > 0)
+		tex_x = tex_img->w - tex_x - 1;
+	if (side == 1 && ray.y < 0)
+		tex_x = tex_img->w - tex_x - 1;
+	tex_step = 1.0 * tex_img->h / line_height;
+	tex_pos = (draw_start - WIN_H / 2.0 + line_height / 2.0) * tex_step;
 	y = 0;
-	while (y < draw_start) put_color(img, x, y, g->assets.ceiling_color), y++;
+	while (y < draw_start)
+		put_color(img, x, y, g->assets.ceiling_color), y++;
 	y = draw_start;
 	while (y <= draw_end)
 	{
-			tex_y = (int)tex_pos;
-			if (tex_y < 0) tex_y = 0;
-			if (tex_y >= tex_img->h) tex_y = tex_img->h - 1;
-			color = get_tex_color_img(tex_img, tex_x, tex_y);
-			if (side == 1)
-				color = ( (((color & 0xFF0000) >> 1) & 0x7F0000)
-						| (((color & 0x00FF00) >> 1) & 0x007F00)
-						| (((color & 0x0000FF) >> 1) & 0x00007F) );
-			put_color(img, x, y, color);
-			tex_pos += tex_step;
+		tex_y = (int)tex_pos;
+		if (tex_y < 0)
+			tex_y = 0;
+		if (tex_y >= tex_img->h)
+			tex_y = tex_img->h - 1;
+		color = get_tex_color_img(tex_img, tex_x, tex_y);
+		// if (side == 1)
+		// 	color = ((((color & 0xFF0000) >> 1) & 0x7F0000) | (((color & 0x00FF00) >> 1) & 0x007F00) | (((color & 0x0000FF) >> 1) & 0x00007F));
+		put_color(img, x, y, color);
+		tex_pos += tex_step;
 		y++;
 	}
-	while (y < WIN_H) put_color(img, x, y, g->assets.floor_color), y++;
+	while (y < WIN_H)
+		put_color(img, x, y, g->assets.floor_color), y++;
 }
 
-static void    raycast(t_game *g, t_img *img, t_coord *c, int x)
+static void	raycast(t_game *g, t_img *img, t_coord *c, int x)
 {
-	double        camera_x;
-	t_dpoint    ray;
-	t_dpoint    delta;
-	t_dpoint    sideDist;
-	t_point    step;
-	t_point    map;
-	int            hit;
-	int            side;
+	double		camera_x;
+	t_dpoint	ray;
+	t_dpoint	delta;
+	t_dpoint	sideDist;
+	t_point		step;
+	t_point		map;
+	int			hit;
+	int			side;
 
 	camera_x = 2.0 * x / (double)WIN_W - 1.0;
 	ray.x = c->dir.x + c->plane.x * camera_x;
@@ -167,11 +144,10 @@ static void    raycast(t_game *g, t_img *img, t_coord *c, int x)
 	draw_col(g, side, sideDist, delta, img, x, c, ray);
 }
 
-
-void    draw(t_game *g)
+void	draw(t_game *g)
 {
-	t_img    *img;
-	int x;
+	t_img	*img;
+	int		x;
 
 	if ((int)g->img_n == 1)
 		img = &g->img1;
