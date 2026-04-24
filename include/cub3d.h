@@ -94,6 +94,7 @@ typedef struct s_img
 	int				endian;
 	int 			w;
 	int 			h;
+	char			*path;
 }					t_img;
 
 typedef struct s_assets

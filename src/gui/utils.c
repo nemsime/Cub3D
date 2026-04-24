@@ -19,6 +19,7 @@ static int	close_window(t_game *g)
 	mlx_destroy_window(g->mlx, g->win);
 	mlx_destroy_display(g->mlx);
 	free(g->mlx);
+	g->mlx = NULL;
 	free_game_content(g);
 	exit(0);
 }
@@ -85,12 +86,28 @@ static int	key_hook(int key, t_game *g)
 
 void	init_image(t_img *i, void *mlx, char *xpm)
 {
+	char	*new_path;
+
+	if (xpm)
+	{
+		new_path = ft_strdup(xpm);
+		if (!new_path)
+			return ;
+		if (i->path)
+			free(i->path);
+		i->path = new_path;
+		xpm = i->path;
+	}
+	if (!mlx)
+		return ;
 	i->w = WIN_W;
 	i->h = WIN_H;
 	if (!xpm)
 		i->img = mlx_new_image(mlx, WIN_W, WIN_H);
 	else 
 		i->img = mlx_xpm_file_to_image(mlx, xpm, &i->w, &i->h);
+	if (!i->img)
+		return ;
 	i->addr = mlx_get_data_addr(i->img, &i->bits_per_pixel, &i->line_length,
 			&i->endian);
 	i->bytes_per_pixel = i->bits_per_pixel / 8;
@@ -102,6 +119,14 @@ void	start_gui(t_game *g)
 	g->win = mlx_new_window(g->mlx, WIN_W, WIN_H, "cub3D");
 	init_image(&g->img, g->mlx, 0);
 	init_image(&g->img1, g->mlx, 0);
+	if (g->assets.no && g->assets.no->path)
+		init_image(g->assets.no, g->mlx, g->assets.no->path);
+	if (g->assets.so && g->assets.so->path)
+		init_image(g->assets.so, g->mlx, g->assets.so->path);
+	if (g->assets.we && g->assets.we->path)
+		init_image(g->assets.we, g->mlx, g->assets.we->path);
+	if (g->assets.ea && g->assets.ea->path)
+		init_image(g->assets.ea, g->mlx, g->assets.ea->path);
 	g->img_n = 1;
 	init_map(&g->map, &g->coord);
 	draw(g);

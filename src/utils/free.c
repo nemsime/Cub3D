@@ -23,13 +23,33 @@ void	free_map(t_map *map)
 void	free_assets(t_game *game)
 {
 	if (game->assets.no)
+	{
+		if (game->assets.no->img && game->mlx)
+			mlx_destroy_image(game->mlx, game->assets.no->img);
+		free(game->assets.no->path);
 		free(game->assets.no);
+	}
 	if (game->assets.so)
+	{
+		if (game->assets.so->img && game->mlx)
+			mlx_destroy_image(game->mlx, game->assets.so->img);
+		free(game->assets.so->path);
 		free(game->assets.so);
+	}
 	if (game->assets.we)
+	{
+		if (game->assets.we->img && game->mlx)
+			mlx_destroy_image(game->mlx, game->assets.we->img);
+		free(game->assets.we->path);
 		free(game->assets.we);
+	}
 	if (game->assets.ea)
+	{
+		if (game->assets.ea->img && game->mlx)
+			mlx_destroy_image(game->mlx, game->assets.ea->img);
+		free(game->assets.ea->path);
 		free(game->assets.ea);
+	}
 }
 
 void	free_grid(t_map *map)

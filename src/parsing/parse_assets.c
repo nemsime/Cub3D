@@ -1,25 +1,31 @@
 #include "../../include/cub3d.h"
 
+static void	assign_texture(t_img **slot, char *texture)
+{
+	if (!*slot)
+	{
+		*slot = malloc(sizeof(t_img));
+		if (!*slot)
+			return ;
+		ft_memset(*slot, 0, sizeof(t_img));
+	}
+	init_image(*slot, NULL, texture);
+}
+
 void assets_input(t_game *game, t_id id, char *texture, int color)
 {
-    if (id == ID_NO)
-		init_image(game->assets.no, game->mlx, texture);
-        // game->assets.no = ft_strdup(texture);
-    else if (id == ID_SO)
-		init_image(game->assets.so, game->mlx, texture);
-
-        // game->assets.so = ft_strdup(texture);
-    else if (id == ID_WE)
-		init_image(game->assets.we, game->mlx, texture);
-
-        // game->assets.we = ft_strdup(texture);
-    else if (id == ID_EA)
-		init_image(game->assets.ea, game->mlx, texture);
-        // game->assets.ea = ft_strdup(texture);
-    else if (id == ID_F)
-        game->assets.floor_color = color;
-    else if (id == ID_C)
-        game->assets.ceiling_color = color;
+	if (id == ID_NO)
+		assign_texture(&game->assets.no, texture);
+	else if (id == ID_SO)
+		assign_texture(&game->assets.so, texture);
+	else if (id == ID_WE)
+		assign_texture(&game->assets.we, texture);
+	else if (id == ID_EA)
+		assign_texture(&game->assets.ea, texture);
+	else if (id == ID_F)
+		game->assets.floor_color = color;
+	else if (id == ID_C)
+		game->assets.ceiling_color = color;
 }
 
 void set_flag(t_game *game, t_id id)

@@ -7,7 +7,9 @@ int	hit_wall(t_map* m, int col, int row)
 {
 	char	ch;
 
-	if (col < 0 || row < 0 )
+	if (col < 0 || row < 0)
+		return (1);
+	if ((int)ft_strlen(m->grid[row]) <= col)
 		return (1);
 	ch = m->grid[row][col];
 	if (ch == '1')
